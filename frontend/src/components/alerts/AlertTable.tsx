@@ -33,9 +33,9 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
       {/* Controls Bar */}
-      <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
@@ -43,7 +43,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
             placeholder="Search alerts or coordinates..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:border-ocean-500"
+            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs bg-white dark:bg-slate-900 focus:outline-none focus:border-ocean-500"
           />
         </div>
 
@@ -57,7 +57,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 severityFilter === sev
                   ? 'bg-ocean-500 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'
               }`}
             >
               {sev}
@@ -69,7 +69,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-100/70 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+          <thead className="bg-slate-100/70 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th className="p-3">Alert ID</th>
               <th className="p-3">Severity</th>
@@ -80,7 +80,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
               <th className="p-3 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+          <tbody className="divide-y divide-slate-100 text-slate-700 dark:text-slate-300">
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-6 text-center text-slate-400">
@@ -94,7 +94,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
                 const isAck = acknowledged[alert.alert_id];
 
                 return (
-                  <tr key={alert.alert_id} className={`hover:bg-slate-50 transition-colors ${isAck ? 'opacity-60 bg-slate-50/50' : ''}`}>
+                  <tr key={alert.alert_id} className={`hover:bg-slate-50 dark:bg-slate-800 transition-colors ${isAck ? 'opacity-60 bg-slate-50 dark:bg-slate-800/50' : ''}`}>
                     <td className="p-3 font-mono font-bold text-slate-900">{alert.alert_id}</td>
                     <td className="p-3">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${badge.bg}`}>
@@ -112,7 +112,7 @@ export const AlertTable: React.FC<AlertTableProps> = ({ alerts }) => {
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                           isAck
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                         }`}
                       >
                         <CheckCircle className="w-3.5 h-3.5" />

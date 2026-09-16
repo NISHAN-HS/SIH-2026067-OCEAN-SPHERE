@@ -538,7 +538,7 @@ export const CesiumGlobe: React.FC<CesiumGlobeProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full min-h-[450px] rounded-2xl overflow-hidden border border-slate-200/90 shadow-lg bg-slate-950 ${fullScreen ? 'h-[calc(100vh-6rem)]' : ''}`}>
+    <div className={`relative w-full h-full min-h-[450px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700/90 shadow-lg bg-slate-950 ${fullScreen ? 'h-[calc(100vh-6rem)]' : ''}`}>
       
       {/* Coordinates Badge Top Left */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
@@ -626,38 +626,38 @@ export const CesiumGlobe: React.FC<CesiumGlobeProps> = ({
 
       {/* Interactive Location Inspector Popup */}
       {popupInfo && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 w-80 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200 p-4 text-slate-800 shadow-2xl animate-in fade-in zoom-in duration-200">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 w-80 rounded-2xl bg-white dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 p-4 text-slate-800 dark:text-slate-200 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2 mb-3">
             <div>
               <span className="text-[10px] font-bold uppercase text-ocean-600 tracking-wider">Region Intelligence</span>
               <h4 className="text-sm font-bold text-slate-900">{popupInfo.oceanName}</h4>
             </div>
             <button
               onClick={() => setPopupInfo(null)}
-              className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700"
+              className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 dark:text-slate-300"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="space-y-2 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-100 font-mono">
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800 font-mono">
               <span className="text-slate-500">Coordinates:</span>
               <span className="font-semibold text-slate-900">{popupInfo.latitude}° N, {popupInfo.longitude}° E</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
               <span className="text-slate-500">Temperature:</span>
               <span className="font-bold text-slate-900 font-mono">{popupInfo.temperature} °C</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
               <span className="text-slate-500">Salinity:</span>
               <span className="font-bold text-slate-900 font-mono">{popupInfo.salinity} PSU</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
               <span className="text-slate-500">Current Speed:</span>
               <span className="font-bold text-slate-900 font-mono">{popupInfo.currentSpeed} m/s</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
               <span className="text-slate-500">Reliability Score:</span>
               <span className={`px-2 py-0.5 rounded font-bold ${
                 popupInfo.reliabilityScore >= 80

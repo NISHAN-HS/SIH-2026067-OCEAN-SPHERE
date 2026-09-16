@@ -64,7 +64,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             <select
               value={regionA}
               onChange={(e) => setRegionA(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-white"
+              className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-slate-200 dark:text-white"
             >
               {regions.map(r => (
                 <option key={r.region_id} value={r.region_id}>{r.name}</option>
@@ -77,7 +77,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             <select
               value={regionB}
               onChange={(e) => setRegionB(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-white"
+              className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-slate-200 dark:text-white"
             >
               {regions.map(r => (
                 <option key={r.region_id} value={r.region_id}>{r.name}</option>
@@ -135,7 +135,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
 
         {/* Visual Bar Comparison Chart */}
         <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 space-y-3">
-          <span className="font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-white block">
+          <span className="font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200 dark:text-white block">
             Comparative Metric Breakdown
           </span>
           <div className="h-56 w-full">

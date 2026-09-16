@@ -56,19 +56,19 @@ export const ForecastPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <BarChart3 className="w-6 h-6 text-ocean-600" />
           <span>Forecast vs Observation Analysis</span>
         </h1>
-        <p className="text-xs text-slate-500 font-medium">Comparative validation between HYCOM numerical model forecasts and in-situ ocean observations.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Comparative validation between HYCOM numerical model forecasts and in-situ ocean observations.</p>
       </div>
 
       {/* Temperature Forecast vs Observed Chart */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <Thermometer className="w-5 h-5 text-rose-500" />
-            <h3 className="text-sm font-bold text-slate-900">Sea Surface Temperature (°C): HYCOM Model vs In-situ Observations</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Sea Surface Temperature (°C): HYCOM Model vs In-situ Observations</h3>
           </div>
           <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
             MAE: 0.14 °C | RMSE: 0.21 °C
@@ -91,11 +91,11 @@ export const ForecastPage: React.FC = () => {
 
       {/* Salinity Comparison & Temperature Bias Area Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <Droplets className="w-5 h-5 text-sky-500" />
-              <h3 className="text-sm font-bold text-slate-900">Salinity Profile (PSU)</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Salinity Profile (PSU)</h3>
             </div>
             <span className="text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">MAE: 0.10 PSU</span>
           </div>
@@ -114,11 +114,11 @@ export const ForecastPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <Wind className="w-5 h-5 text-indigo-500" />
-              <h3 className="text-sm font-bold text-slate-900">Forecast Temperature Bias Variance</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Forecast Temperature Bias Variance</h3>
             </div>
             <span className="text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">Max Bias: 0.42 °C</span>
           </div>

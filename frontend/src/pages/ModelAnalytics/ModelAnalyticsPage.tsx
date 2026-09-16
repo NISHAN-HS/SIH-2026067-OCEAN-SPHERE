@@ -47,51 +47,51 @@ export const ModelAnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Cpu className="w-6 h-6 text-ocean-600" />
           <span>Model Analytics & Live Prediction Sandbox</span>
         </h1>
-        <p className="text-xs text-slate-500 font-medium">Machine learning algorithm evaluation, feature importance breakdown, and live inference runner.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Machine learning algorithm evaluation, feature importance breakdown, and live inference runner.</p>
       </div>
 
       {/* Model Performance Scorecards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-bold text-slate-500 uppercase">Primary Model</span>
-          <h3 className="text-lg font-bold text-slate-900 mt-1">Gradient Boosting</h3>
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xs">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Primary Model</span>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1">Gradient Boosting</h3>
           <span className="text-xs text-emerald-600 font-semibold">Active in Production</span>
         </div>
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-bold text-slate-500 uppercase">Model Accuracy (R²)</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xs">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Model Accuracy (R²)</span>
           <h3 className="text-xl font-bold text-emerald-600 mt-1">99.91%</h3>
-          <span className="text-xs text-slate-500">Cross-validated</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Cross-validated</span>
         </div>
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-bold text-slate-500 uppercase">Mean Absolute Error</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xs">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Mean Absolute Error</span>
           <h3 className="text-xl font-bold text-ocean-600 mt-1">0.124</h3>
-          <span className="text-xs text-slate-500">Score Error Margin</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Score Error Margin</span>
         </div>
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-bold text-slate-500 uppercase">Root Mean Sq. Error</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xs">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Root Mean Sq. Error</span>
           <h3 className="text-xl font-bold text-navy-500 mt-1">0.187</h3>
-          <span className="text-xs text-slate-500">RMSE Variance</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">RMSE Variance</span>
         </div>
       </div>
 
       {/* Live Prediction Interactive Sandbox Widget */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Zap className="w-5 h-5 text-amber-500" />
-          <h3 className="text-base font-bold text-slate-900">Live Prediction Sandbox (`POST /predict`)</h3>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Live Prediction Sandbox (`POST /predict`)</h3>
         </div>
 
         <form onSubmit={handlePredict} className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Region ID</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Region ID</label>
             <select
               value={form.region_id}
               onChange={e => setForm({ ...form, region_id: e.target.value })}
-              className="w-full p-2 rounded-xl border border-slate-200 bg-white"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             >
               <option value="IND_WEST">West Coast of India (Arabian Sea)</option>
               <option value="IND_EAST">East Coast of India (Bay of Bengal)</option>
@@ -101,52 +101,52 @@ export const ModelAnalyticsPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Forecast Temp (°C)</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Forecast Temp (°C)</label>
             <input
               type="number" step="0.1"
               value={form.forecast_temperature}
               onChange={e => setForm({ ...form, forecast_temperature: parseFloat(e.target.value) })}
-              className="w-full p-2 rounded-xl border border-slate-200"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Observed Temp (°C)</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Observed Temp (°C)</label>
             <input
               type="number" step="0.1"
               value={form.observed_temperature}
               onChange={e => setForm({ ...form, observed_temperature: parseFloat(e.target.value) })}
-              className="w-full p-2 rounded-xl border border-slate-200"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Forecast Salinity (PSU)</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Forecast Salinity (PSU)</label>
             <input
               type="number" step="0.1"
               value={form.forecast_salinity}
               onChange={e => setForm({ ...form, forecast_salinity: parseFloat(e.target.value) })}
-              className="w-full p-2 rounded-xl border border-slate-200"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Observed Salinity (PSU)</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Observed Salinity (PSU)</label>
             <input
               type="number" step="0.1"
               value={form.observed_salinity}
               onChange={e => setForm({ ...form, observed_salinity: parseFloat(e.target.value) })}
-              className="w-full p-2 rounded-xl border border-slate-200"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Forecast Speed (m/s)</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Forecast Speed (m/s)</label>
             <input
               type="number" step="0.01"
               value={form.forecast_current_speed}
               onChange={e => setForm({ ...form, forecast_current_speed: parseFloat(e.target.value) })}
-              className="w-full p-2 rounded-xl border border-slate-200"
+              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700"
             />
           </div>
 
@@ -195,8 +195,8 @@ export const ModelAnalyticsPage: React.FC = () => {
       </div>
 
       {/* Feature Importance Chart */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900">Feature Importance Breakdown</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs space-y-4">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Feature Importance Breakdown</h3>
         <div className="h-60 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={featureImportance} layout="vertical">

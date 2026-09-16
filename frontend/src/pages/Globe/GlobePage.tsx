@@ -25,11 +25,11 @@ export const GlobePage: React.FC = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Globe className="w-6 h-6 text-ocean-600" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Globe className="w-6 h-6 text-ocean-600 dark:text-ocean-400" />
             <span>Global Reliability 3D Earth Globe</span>
           </h1>
-          <p className="text-xs text-slate-500 font-medium">Full-screen interactive 3D spatial visualization of ocean forecast reliability score boundaries.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Full-screen interactive 3D spatial visualization of ocean forecast reliability score boundaries.</p>
         </div>
       </div>
 

@@ -41,11 +41,11 @@ export const ReliabilityPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <ShieldCheck className="w-6 h-6 text-ocean-600" />
           <span>Reliability Dashboard</span>
         </h1>
-        <p className="text-xs text-slate-500 font-medium">Executive verification KPIs, forecast reliability scoring, and regional accuracy distribution.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Executive verification KPIs, forecast reliability scoring, and regional accuracy distribution.</p>
       </div>
 
       {/* Metrics Header */}
@@ -58,8 +58,8 @@ export const ReliabilityPage: React.FC = () => {
 
       {/* Recharts Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-          <h3 className="text-sm font-bold text-slate-900 mb-4">Regional Forecast Reliability Score Comparison</h3>
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Regional Forecast Reliability Score Comparison</h3>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
@@ -73,8 +73,8 @@ export const ReliabilityPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
-          <h3 className="text-sm font-bold text-slate-900 mb-2">Reliability Score Distribution</h3>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-xs flex flex-col justify-between">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Reliability Score Distribution</h3>
           <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -88,14 +88,14 @@ export const ReliabilityPage: React.FC = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-2 text-xs border-t border-slate-100 pt-3">
+          <div className="space-y-2 text-xs border-t border-slate-100 dark:border-slate-800 pt-3">
             {pieData.map((item, idx) => (
               <div key={idx} className="flex justify-between items-center">
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></span>
                   <span>{item.name}</span>
                 </span>
-                <span className="font-bold text-slate-800">{item.value} Records</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{item.value} Records</span>
               </div>
             ))}
           </div>

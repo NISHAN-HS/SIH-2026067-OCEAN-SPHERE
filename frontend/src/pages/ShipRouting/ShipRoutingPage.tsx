@@ -275,7 +275,7 @@ export const ShipRoutingPage: React.FC = () => {
 
           {/* Quick Operational KPI Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full lg:w-auto">
-            <div className="bg-white/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
+            <div className="bg-white dark:bg-slate-900/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
               <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Route Reliability</div>
               <div className="text-lg font-black text-emerald-400 flex items-center justify-center gap-1">
                 <ShieldCheck className="w-4 h-4" />
@@ -283,7 +283,7 @@ export const ShipRoutingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
+            <div className="bg-white dark:bg-slate-900/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
               <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Fuel Savings</div>
               <div className="text-lg font-black text-amber-400 flex items-center justify-center gap-1">
                 <Fuel className="w-4 h-4" />
@@ -291,7 +291,7 @@ export const ShipRoutingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
+            <div className="bg-white dark:bg-slate-900/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
               <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Eta Accuracy</div>
               <div className="text-lg font-black text-sky-400 flex items-center justify-center gap-1">
                 <Clock className="w-4 h-4" />
@@ -299,7 +299,7 @@ export const ShipRoutingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
+            <div className="bg-white dark:bg-slate-900/5 backdrop-blur-md rounded-xl p-2.5 border border-white/10 text-center">
               <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Hazards Avoided</div>
               <div className="text-lg font-black text-rose-400 flex items-center justify-center gap-1">
                 <AlertTriangle className="w-4 h-4" />
@@ -315,13 +315,13 @@ export const ShipRoutingPage: React.FC = () => {
 
         {/* ── LEFT CONTROL PANEL (4 Cols) ─────────────────────────────────── */}
         <div className="lg:col-span-4 space-y-5">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/90 dark:border-slate-800 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Anchor className="w-4 h-4 text-ocean-600" />
                 Voyage Parameters
               </h2>
-              <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
                 ECDIS Ready
               </span>
             </div>
@@ -392,7 +392,7 @@ export const ShipRoutingPage: React.FC = () => {
 
               {/* Vessel specs badge */}
               {selectedVessel && (
-                <div className="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60 text-[11px] grid grid-cols-3 gap-2 text-center text-slate-600 dark:text-slate-300">
+                <div className="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700/60 text-[11px] grid grid-cols-3 gap-2 text-center text-slate-600 dark:text-slate-300">
                   <div>
                     <span className="block text-[9px] font-semibold text-slate-400">Design Speed</span>
                     <span className="font-bold text-slate-900 dark:text-white">{selectedVessel.default_speed_knots} kts</span>
@@ -440,7 +440,7 @@ export const ShipRoutingPage: React.FC = () => {
                   className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
                     optimizationMode === 'reliability'
                       ? 'bg-white dark:bg-slate-900 text-ocean-600 dark:text-ocean-400 shadow-sm border border-slate-200 dark:border-slate-700'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -453,7 +453,7 @@ export const ShipRoutingPage: React.FC = () => {
                   className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
                     optimizationMode === 'eco'
                       ? 'bg-white dark:bg-slate-900 text-ocean-600 dark:text-ocean-400 shadow-sm border border-slate-200 dark:border-slate-700'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'
                   }`}
                 >
                   <Fuel className="w-4 h-4 text-amber-500" />
@@ -466,7 +466,7 @@ export const ShipRoutingPage: React.FC = () => {
                   className={`py-2 px-1 rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
                     optimizationMode === 'express'
                       ? 'bg-white dark:bg-slate-900 text-ocean-600 dark:text-ocean-400 shadow-sm border border-slate-200 dark:border-slate-700'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'
                   }`}
                 >
                   <Zap className="w-4 h-4 text-sky-500" />
@@ -477,7 +477,7 @@ export const ShipRoutingPage: React.FC = () => {
 
             {/* Avoidance Constraints */}
             <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs font-medium">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hazard Avoidance Filters</span>
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Hazard Avoidance Filters</span>
               <div className="space-y-1.5">
                 <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
                   <input
@@ -530,7 +530,7 @@ export const ShipRoutingPage: React.FC = () => {
           </div>
 
           {/* Quick Presets Box */}
-          <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-2">
+          <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 space-y-2">
             <div className="text-xs font-bold text-slate-700 dark:text-slate-300">Frequent Maritime Corridors</div>
             <div className="flex flex-wrap gap-1.5">
               <button
@@ -673,37 +673,37 @@ export const ShipRoutingPage: React.FC = () => {
           {/* 2. Key Voyage Metrics Cards */}
           {routeResult && (
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Distance</span>
                 <span className="text-lg font-black text-slate-900 dark:text-white">{routeResult.total_distance_nm}</span>
-                <span className="text-[10px] text-slate-500 font-medium block">Nautical Miles</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Nautical Miles</span>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Transit Duration</span>
                 <span className="text-lg font-black text-ocean-600">{routeResult.estimated_transit_hours}</span>
-                <span className="text-[10px] text-slate-500 font-medium block">Hours ({(routeResult.estimated_transit_hours / 24).toFixed(1)} Days)</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Hours ({(routeResult.estimated_transit_hours / 24).toFixed(1)} Days)</span>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Average SOG</span>
                 <span className="text-lg font-black text-sky-600">{routeResult.average_speed_knots}</span>
-                <span className="text-[10px] text-slate-500 font-medium block">Knots</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Knots</span>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Fuel Burn</span>
                 <span className="text-lg font-black text-amber-600">{routeResult.fuel_consumption_tons}</span>
-                <span className="text-[10px] text-slate-500 font-medium block">Metric Tons</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Metric Tons</span>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">CO2 Footprint</span>
                 <span className="text-lg font-black text-rose-600">{routeResult.co2_emissions_tons}</span>
-                <span className="text-[10px] text-slate-500 font-medium block">Tons CO2</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Tons CO2</span>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm text-center">
+              <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-800 shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Risk Rating</span>
                 <span className={`text-xs font-black px-2 py-1 rounded-full inline-block mt-1 ${
                   routeResult.overall_risk === 'High Risk' ? 'bg-rose-100 text-rose-700' : routeResult.overall_risk === 'Moderate Risk' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
@@ -715,14 +715,14 @@ export const ShipRoutingPage: React.FC = () => {
           )}
 
           {/* 3. Ocean Environment & Reliability Distance Chart */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/90 dark:border-slate-800 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-ocean-600" />
                   Route Profile Analytics (Distance vs Sea State & INCOIS Score)
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Cross-section of forecast reliability score and wave height across nautical miles from departure.
                 </p>
               </div>
@@ -751,14 +751,14 @@ export const ShipRoutingPage: React.FC = () => {
 
           {/* 4. Step-by-Step Voyage Leg Manifest Table */}
           {routeResult && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/90 dark:border-slate-800 shadow-sm space-y-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <FileText className="w-4 h-4 text-ocean-600" />
                     Voyage Navigation Waypoint Manifest
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Step-by-step leg breakdown with heading bearings, SOG expectations, and pilot advisories.
                   </p>
                 </div>
@@ -819,7 +819,7 @@ export const ShipRoutingPage: React.FC = () => {
                     className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5"
                     title="Export JSON Manifest"
                   >
-                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                     <span>JSON</span>
                   </button>
                 </div>
@@ -850,7 +850,7 @@ export const ShipRoutingPage: React.FC = () => {
                           className={`cursor-pointer transition-colors ${
                             isSelected
                               ? 'bg-ocean-50 dark:bg-ocean-950/60 font-semibold text-slate-900 dark:text-white'
-                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                              : 'hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800/40'
                           }`}
                         >
                           <td className="px-3 py-2">

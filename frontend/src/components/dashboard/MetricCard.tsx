@@ -23,7 +23,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     emerald: 'from-emerald-50 to-white text-emerald-600 border-emerald-100',
     amber: 'from-amber-50 to-white text-amber-600 border-amber-100',
     rose: 'from-rose-50 to-white text-rose-600 border-rose-100',
-    navy: 'from-slate-100 to-white text-navy-500 border-slate-200'
+    navy: 'from-slate-100 to-white text-navy-500 border-slate-200 dark:border-slate-700'
   };
 
   const iconBgStyles = {
@@ -46,7 +46,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       <div className="mt-3 flex items-baseline gap-2">
         <span className="text-2xl font-bold text-slate-900 tracking-tight">{value}</span>
         {badge && (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             {badge}
           </span>
         )}

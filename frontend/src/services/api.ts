@@ -446,3 +446,27 @@ export const calculateShipRoute = async (request: RoutingRequest): Promise<ShipR
   }
 };
 
+export interface PredictionChatRequest {
+  message: string;
+  history?: Array<{ sender: 'user' | 'assistant'; text: string; timestamp?: string }>;
+}
+
+export interface PredictionChatResponse {
+  reply: string;
+  predicted_reliability_score?: number;
+  predicted_category?: string;
+  risk_level?: string;
+  confidence_level?: string;
+  extracted_params?: any;
+  suggestions: string[];
+}
+
+export const sendPredictionChat = async (payload: PredictionChatRequest): Promise<PredictionChatResponse> => {
+  try {
+    const response = await api.post('/chat/predict', payload);
+    return response.data;
+  } catch (error) {
+    console.error('[API] Failed POST /chat/predict:', error);
+    throw error;
+  }
+};

@@ -60,7 +60,7 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
         <div className="space-y-4 text-xs">
           
           {/* Theme & Display */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 dark:border-slate-700/80 space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-bold text-slate-900 dark:text-white block">Theme Mode</span>
@@ -77,7 +77,7 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
           </div>
 
           {/* Telemetry Polling Rate */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 dark:border-slate-700/80 space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-bold text-slate-900 dark:text-white block">Auto-Refresh Interval</span>
@@ -102,7 +102,7 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
           </div>
 
           {/* Scientific Measurement Units */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 dark:border-slate-700/80 space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-bold text-slate-900 dark:text-white block">Temperature Unit</span>
@@ -130,7 +130,7 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
           </div>
 
           {/* 3D Globe Rendering Options */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 dark:border-slate-700/80 space-y-2">
             <label className="flex items-center justify-between cursor-pointer">
               <span className="font-bold text-slate-900 dark:text-white">ArcGIS High-Res Satellite Imagery</span>
               <input

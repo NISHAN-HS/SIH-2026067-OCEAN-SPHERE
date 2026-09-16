@@ -29,7 +29,7 @@ export const OceanGlobe: React.FC<OceanGlobeProps> = ({
     salinity: true,
     currents: true,
     ssh: false,
-    reliability: true,
+    reliability: false,
     argo: true,
     buoys: true,
     alerts: true,
@@ -253,7 +253,7 @@ export const OceanGlobe: React.FC<OceanGlobeProps> = ({
                   <Icon className={`w-3.5 h-3.5 ${layer.color}`} />
                   <span>{layer.label}</span>
                 </div>
-                {active ? <Eye className="w-3.5 h-3.5 text-ocean-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600" />}
+                {active ? <Eye className="w-3.5 h-3.5 text-ocean-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />}
               </button>
             );
           })}
@@ -285,44 +285,44 @@ export const OceanGlobe: React.FC<OceanGlobeProps> = ({
 
       {/* Region Inspector Slide-Over Modal */}
       {selectedRegion && (
-        <div className="absolute top-16 left-4 z-30 w-80 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200 p-5 text-slate-800 shadow-2xl animate-in fade-in zoom-in duration-200">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
+        <div className="absolute top-16 left-4 z-30 w-80 rounded-2xl bg-white dark:bg-slate-900/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 p-5 text-slate-800 dark:text-slate-100 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-3">
             <div>
-              <span className="text-[10px] font-bold uppercase text-ocean-600 tracking-wider">Region Intelligence</span>
-              <h4 className="text-sm font-bold text-slate-900">{selectedRegion.name}</h4>
+              <span className="text-[10px] font-bold uppercase text-ocean-600 dark:text-ocean-400 tracking-wider">Region Intelligence</span>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">{selectedRegion.name}</h4>
             </div>
             <button
               onClick={() => setSelectedRegion(null)}
-              className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700"
+              className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Coordinates</span>
-              <span className="font-semibold text-slate-800">{selectedRegion.lat_min}°N - {selectedRegion.lat_max}°N | {selectedRegion.lon_min}°E - {selectedRegion.lon_max}°E</span>
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Coordinates</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedRegion.lat_min}°N - {selectedRegion.lat_max}°N | {selectedRegion.lon_min}°E - {selectedRegion.lon_max}°E</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Sea Surface Temp</span>
-              <span className="font-semibold text-slate-800">28.45 °C</span>
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Sea Surface Temp</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">28.45 °C</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Salinity</span>
-              <span className="font-semibold text-slate-800">35.12 PSU</span>
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Salinity</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">35.12 PSU</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Current Speed</span>
-              <span className="font-semibold text-slate-800">0.24 m/s</span>
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Current Speed</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">0.24 m/s</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Reliability Score</span>
-              <span className="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">89.4% (High)</span>
+            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">Reliability Score</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">89.4% (High)</span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-slate-500">Risk Assessment</span>
-              <span className="font-semibold text-emerald-600">Low Operational Risk</span>
+              <span className="text-slate-500 dark:text-slate-400">Risk Assessment</span>
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400">Low Operational Risk</span>
             </div>
           </div>
         </div>

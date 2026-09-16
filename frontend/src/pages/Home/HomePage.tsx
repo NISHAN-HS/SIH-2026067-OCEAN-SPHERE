@@ -6,6 +6,7 @@ import { RightIntelligencePanel } from '../../components/panels/RightIntelligenc
 import { BottomStatusBar } from '../../components/layout/BottomStatusBar';
 import { LocationProfileModal } from '../../components/modals/LocationProfileModal';
 import { RegionCompareModal } from '../../components/modals/RegionCompareModal';
+import { useTheme } from '../../hooks/useTheme';
 
 import { getRegions, getReliability, getAlerts } from '../../services/api';
 import { Region, ReliabilityScore, AlertItem, LayerState, DepthControl, TimeControlState, SelectedLocationData } from '../../types';
@@ -58,7 +59,7 @@ export const HomePage: React.FC = () => {
 
   // Search & Navigation State
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // Modal Dialog States
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -73,7 +74,7 @@ export const HomePage: React.FC = () => {
     northwardCurrent: false,
     eastwardCurrent: false,
     ssh: false,
-    reliability: true,
+    reliability: false,
     confidence: true,
     argo: true,
     buoys: true,
@@ -353,7 +354,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className={`h-screen w-screen flex flex-col font-sans overflow-hidden transition-colors duration-300 ${
-      isDarkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-800'
+      isDarkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-800 dark:text-slate-200'
     }`}>
       
       {/* 1. TOP NAVIGATION BAR (Height: 70px) */}
@@ -367,7 +368,7 @@ export const HomePage: React.FC = () => {
           handleTogglePlayback();
         }}
         isDarkMode={isDarkMode}
-        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+        onToggleTheme={toggleTheme}
         apiOnline={true}
         dbOnline={true}
         modelActive={true}

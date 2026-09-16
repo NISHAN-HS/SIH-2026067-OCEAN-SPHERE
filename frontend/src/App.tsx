@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
+import { AIChatBot } from './components/chat/AIChatBot';
+import { useTheme } from './hooks/useTheme';
 
 // Pages
 import { HomePage } from './pages/Home/HomePage';
@@ -18,6 +20,7 @@ import { AboutPage } from './pages/About/AboutPage';
 const AppContent: React.FC = () => {
   const location = useLocation();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const handleGlobalRefresh = () => {
     setIsRefreshing(true);
@@ -32,8 +35,8 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-ocean-500 selection:text-white">
-      <Navbar onRefresh={handleGlobalRefresh} isRefreshing={isRefreshing} />
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 selection:bg-ocean-500 selection:text-white ${isDarkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'}`}>
+      <Navbar onRefresh={handleGlobalRefresh} isRefreshing={isRefreshing} isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Routes>
@@ -60,6 +63,7 @@ export const App: React.FC = () => {
       <Routes>
         <Route path="/*" element={<AppContent />} />
       </Routes>
+      <AIChatBot />
     </Router>
   );
 };

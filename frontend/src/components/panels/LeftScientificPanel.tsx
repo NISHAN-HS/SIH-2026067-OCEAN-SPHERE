@@ -60,12 +60,12 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
     <aside className="w-[320px] shrink-0 h-[calc(100vh-70px-44px)] overflow-y-auto pr-1 space-y-3.5 scrollbar-thin select-none">
       
       {/* 1. SCIENTIFIC LAYER CONTROL CARD */}
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800 transition-all">
+      <div className="bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-700/90 shadow-sm p-4 text-slate-800 dark:text-slate-200 transition-all">
         <div
           onClick={() => setLayersOpen(!layersOpen)}
-          className="flex items-center justify-between cursor-pointer border-b border-slate-100 pb-2.5 mb-3"
+          className="flex items-center justify-between cursor-pointer border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3"
         >
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900">
+          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-slate-100">
             <Layers className="w-4 h-4 text-ocean-600" />
             <span>Layers</span>
           </div>
@@ -81,8 +81,8 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
           <div className="space-y-2 text-xs">
             
             {/* Ocean Surface Layer */}
-            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/80 transition-colors">
-              <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800">
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-100/80 transition-colors">
+              <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
                 <input
                   type="checkbox"
                   checked={layers.surface}
@@ -98,9 +98,9 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Temperature Layer with Gradient Indicator */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800">
+                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
                   <input
                     type="checkbox"
                     checked={layers.temperature}
@@ -122,9 +122,9 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Salinity Layer with Gradient Indicator */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800">
+                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
                   <input
                     type="checkbox"
                     checked={layers.salinity}
@@ -146,9 +146,9 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Currents Vector Flow Layer */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-1.5 hover:bg-slate-100/80 transition-colors">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800">
+                <label className="flex items-center gap-2.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
                   <input
                     type="checkbox"
                     checked={layers.currents}
@@ -170,8 +170,8 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Sea Surface Height */}
-            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/80 transition-colors">
-              <label className="flex items-center gap-2.5 cursor-pointer font-medium text-slate-700">
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-100/80 transition-colors">
+              <label className="flex items-center gap-2.5 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
                 <input
                   type="checkbox"
                   checked={layers.ssh}
@@ -187,9 +187,9 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Forecast Reliability Layer (Core Innovation) */}
-            <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/90 space-y-2">
+            <div className={`p-2.5 rounded-xl space-y-2 transition-colors ${layers.reliability ? 'bg-emerald-50/70 border border-emerald-200/90 dark:bg-emerald-900/30 dark:border-emerald-700/50' : 'bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-100/80'}`}>
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2.5 cursor-pointer font-bold text-emerald-900">
+                <label className={`flex items-center gap-2.5 cursor-pointer font-bold ${layers.reliability ? 'text-emerald-900 dark:text-emerald-100' : 'text-slate-800 dark:text-slate-200'}`}>
                   <input
                     type="checkbox"
                     checked={layers.reliability}
@@ -197,7 +197,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
                     className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                   />
                   <span className="flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <ShieldCheck className={`w-3.5 h-3.5 ${layers.reliability ? 'text-emerald-600' : 'text-emerald-500 dark:text-emerald-400'}`} />
                     Forecast Reliability Overlay
                   </span>
                 </label>
@@ -217,8 +217,8 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Observation Stations & Alerts Toggles */}
-            <div className="space-y-1 pt-1 border-t border-slate-100">
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-slate-700">
+            <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:bg-slate-800 cursor-pointer text-slate-700 dark:text-slate-300">
                 <span className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -232,7 +232,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
                 <span className="text-[10px] font-mono text-slate-400">1,240 live</span>
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-slate-700">
+              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:bg-slate-800 cursor-pointer text-slate-700 dark:text-slate-300">
                 <span className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -246,7 +246,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
                 <span className="text-[10px] font-mono text-slate-400">184 live</span>
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-slate-700">
+              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:bg-slate-800 cursor-pointer text-slate-700 dark:text-slate-300">
                 <span className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -266,12 +266,12 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
       </div>
 
       {/* 2. DEPTH CONTROL CARD */}
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800">
+      <div className="bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-700/90 shadow-sm p-4 text-slate-800 dark:text-slate-200">
         <div
           onClick={() => setDepthOpen(!depthOpen)}
-          className="flex items-center justify-between cursor-pointer border-b border-slate-100 pb-2.5 mb-3"
+          className="flex items-center justify-between cursor-pointer border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3"
         >
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900">
+          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-slate-100">
             <Sliders className="w-4 h-4 text-ocean-600" />
             <span>Depth</span>
           </div>
@@ -318,7 +318,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                     depth.preset === dp.label
                       ? 'bg-ocean-600 text-white shadow-xs scale-105'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+                      : 'bg-slate-100 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80 hover:text-slate-900'
                   }`}
                 >
                   {dp.label}
@@ -330,17 +330,17 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
       </div>
 
       {/* 3. TIME CONTROL CARD */}
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800">
+      <div className="bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-700/90 shadow-sm p-4 text-slate-800 dark:text-slate-200">
         <div
           onClick={() => setTimeOpen(!timeOpen)}
-          className="flex items-center justify-between cursor-pointer border-b border-slate-100 pb-2.5 mb-3"
+          className="flex items-center justify-between cursor-pointer border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3"
         >
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900">
+          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-slate-100">
             <Calendar className="w-4 h-4 text-ocean-600" />
             <span>Time</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+            <span className="text-[11px] font-mono font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
               {timeState.selectedDate}
             </span>
             {timeOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -353,7 +353,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             <div>
               <div className="flex justify-between text-[10px] font-medium text-slate-400 mb-1">
                 <span>01 Jan 2026</span>
-                <span className="font-bold text-slate-700">12:00 UTC</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">12:00 UTC</span>
                 <span>31 Dec 2026</span>
               </div>
               <input
@@ -366,7 +366,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
             </div>
 
             {/* Playback Controls */}
-            <div className="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
               <button
                 onClick={onTogglePlayback}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs shadow-xs transition-all"

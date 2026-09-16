@@ -22,11 +22,11 @@ export const AlertsPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <AlertTriangle className="w-6 h-6 text-rose-500" />
             <span>Alert Center</span>
           </h1>
-          <p className="text-xs text-slate-500 font-medium">Real-time ocean forecast divergence, anomaly detection, and operational warning feeds.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Real-time ocean forecast divergence, anomaly detection, and operational warning feeds.</p>
         </div>
       </div>
 

@@ -185,16 +185,18 @@ def get_maritime_corridor(origin: PortSchema, dest: PortSchema) -> List[tuple[fl
         else:
             nodes.append((5.5, 80.6, "South Sri Lanka (Dondra Head)"))
             if dest.latitude > 11.0 and dest.id not in ['IXZ', 'SIN']:
-                nodes.append((13.2, 81.5, "Coromandel Sea Lane"))
-                if dest.latitude > 16.0:
-                    nodes.append((17.5, 84.5, "Offshore Visakhapatnam"))
-                    if dest.latitude > 20.0:
-                        nodes.append((19.8, 87.0, "Central Bay of Bengal Lane"))
+                nodes.append((8.0, 82.0, "East Sri Lanka Offshore"))
+                if dest.latitude > 14.0:
+                    nodes.append((13.2, 81.5, "Coromandel Sea Lane"))
+                    if dest.latitude > 16.0:
+                        nodes.append((17.5, 84.5, "Offshore Visakhapatnam"))
+                        if dest.latitude > 20.0:
+                            nodes.append((19.8, 87.0, "Central Bay of Bengal Lane"))
 
     elif orig_is_east and dest_is_west:
         if origin.latitude > 16.0 and origin.id != 'CCU':
             nodes.append((17.5, 84.5, "Offshore Visakhapatnam"))
-        if origin.latitude > 11.0 and origin.id not in ['IXZ', 'SIN']:
+        if origin.latitude > 14.0 and origin.id not in ['IXZ', 'SIN']:
             nodes.append((13.2, 81.5, "Coromandel Sea Lane"))
 
         if origin.id == 'TCR':
@@ -202,6 +204,8 @@ def get_maritime_corridor(origin: PortSchema, dest: PortSchema) -> List[tuple[fl
         elif origin.id == 'CMB':
             pass
         else:
+            if origin.latitude > 11.0 and origin.id not in ['IXZ', 'SIN']:
+                nodes.append((8.0, 82.0, "East Sri Lanka Offshore"))
             nodes.append((5.5, 80.6, "South Sri Lanka (Dondra Head)"))
 
         nodes.append((7.0, 76.8, "Off Cape Comorin (Kanyakumari Passage)"))
