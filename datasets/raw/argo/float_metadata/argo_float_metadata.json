@@ -1,0 +1,457 @@
+{
+  "total_floats": 30,
+  "total_profiles": 90,
+  "generated_at": "2026-09-16T14:57:56",
+  "floats": [
+    {
+      "wmo_id": 5900000,
+      "platform_type": "APEX",
+      "country": "USA",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 120,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 1.9678353242935387,
+      "last_longitude": 148.7352807632767
+    },
+    {
+      "wmo_id": 5900001,
+      "platform_type": "SOLO-II",
+      "country": "France",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 122,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 8.480110424176772,
+      "last_longitude": 110.85125435565016
+    },
+    {
+      "wmo_id": 5900002,
+      "platform_type": "NAVIS",
+      "country": "Japan",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 124,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -56.583092822628366,
+      "last_longitude": -34.92078095023655
+    },
+    {
+      "wmo_id": 5900003,
+      "platform_type": "PROVOR",
+      "country": "Australia",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 126,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -39.41740125298763,
+      "last_longitude": -51.39923658451636
+    },
+    {
+      "wmo_id": 5900004,
+      "platform_type": "NOVA",
+      "country": "UK",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 128,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 22.23323780367751,
+      "last_longitude": 163.03561729591434
+    },
+    {
+      "wmo_id": 5900005,
+      "platform_type": "APEX",
+      "country": "Germany",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 130,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 40.06762351632918,
+      "last_longitude": -56.29263195867847
+    },
+    {
+      "wmo_id": 5900006,
+      "platform_type": "SOLO-II",
+      "country": "India",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 132,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -23.164053639331463,
+      "last_longitude": 131.4359338745981
+    },
+    {
+      "wmo_id": 5900007,
+      "platform_type": "NAVIS",
+      "country": "Canada",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 134,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 47.23356956200767,
+      "last_longitude": 118.8999763915669
+    },
+    {
+      "wmo_id": 5900008,
+      "platform_type": "PROVOR",
+      "country": "USA",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 136,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 26.585263412196554,
+      "last_longitude": 13.73812172912065
+    },
+    {
+      "wmo_id": 5900009,
+      "platform_type": "NOVA",
+      "country": "France",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 138,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -37.207325495424385,
+      "last_longitude": 152.0889741242005
+    },
+    {
+      "wmo_id": 5900010,
+      "platform_type": "APEX",
+      "country": "Japan",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 140,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 6.507310934974456,
+      "last_longitude": -145.02726728459442
+    },
+    {
+      "wmo_id": 5900011,
+      "platform_type": "SOLO-II",
+      "country": "Australia",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 142,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -17.744165516806305,
+      "last_longitude": -142.9749024621302
+    },
+    {
+      "wmo_id": 5900012,
+      "platform_type": "NAVIS",
+      "country": "UK",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 144,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -38.17291168079056,
+      "last_longitude": 72.54262645049727
+    },
+    {
+      "wmo_id": 5900013,
+      "platform_type": "PROVOR",
+      "country": "Germany",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 146,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 34.272211423723064,
+      "last_longitude": 140.57275288623526
+    },
+    {
+      "wmo_id": 5900014,
+      "platform_type": "NOVA",
+      "country": "India",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 148,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 55.857986689436316,
+      "last_longitude": -122.55829167664655
+    },
+    {
+      "wmo_id": 5900015,
+      "platform_type": "APEX",
+      "country": "Canada",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 150,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -32.11756058222872,
+      "last_longitude": -80.7938838370967
+    },
+    {
+      "wmo_id": 5900016,
+      "platform_type": "SOLO-II",
+      "country": "USA",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 152,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -49.97262796039876,
+      "last_longitude": 62.09695067645001
+    },
+    {
+      "wmo_id": 5900017,
+      "platform_type": "NAVIS",
+      "country": "France",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 154,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 12.42581067494622,
+      "last_longitude": -120.85087535273871
+    },
+    {
+      "wmo_id": 5900018,
+      "platform_type": "PROVOR",
+      "country": "Japan",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 156,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 27.47913087451414,
+      "last_longitude": 72.49360917927109
+    },
+    {
+      "wmo_id": 5900019,
+      "platform_type": "NOVA",
+      "country": "Australia",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 158,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -26.85134058032847,
+      "last_longitude": -4.451320005937902
+    },
+    {
+      "wmo_id": 5900020,
+      "platform_type": "APEX",
+      "country": "UK",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 160,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 22.23675945362139,
+      "last_longitude": 65.04399654348919
+    },
+    {
+      "wmo_id": 5900021,
+      "platform_type": "SOLO-II",
+      "country": "Germany",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 162,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 2.144096903645682,
+      "last_longitude": 7.75734923730937
+    },
+    {
+      "wmo_id": 5900022,
+      "platform_type": "NAVIS",
+      "country": "India",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 164,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -54.18185550883193,
+      "last_longitude": -164.37719000372965
+    },
+    {
+      "wmo_id": 5900023,
+      "platform_type": "PROVOR",
+      "country": "Canada",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 166,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -43.45569149254727,
+      "last_longitude": -99.38282273928804
+    },
+    {
+      "wmo_id": 5900024,
+      "platform_type": "NOVA",
+      "country": "USA",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 168,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": -37.56390886344947,
+      "last_longitude": 27.073831272484682
+    },
+    {
+      "wmo_id": 5900025,
+      "platform_type": "APEX",
+      "country": "France",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 170,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 59.31814813849164,
+      "last_longitude": -136.64388235417474
+    },
+    {
+      "wmo_id": 5900026,
+      "platform_type": "SOLO-II",
+      "country": "Japan",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 172,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 2.479847602196031,
+      "last_longitude": 0.04201696828556578
+    },
+    {
+      "wmo_id": 5900027,
+      "platform_type": "NAVIS",
+      "country": "Australia",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 174,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 9.454744257050024,
+      "last_longitude": -130.31655542679744
+    },
+    {
+      "wmo_id": 5900028,
+      "platform_type": "PROVOR",
+      "country": "UK",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 176,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 28.178286992325823,
+      "last_longitude": -160.98897560786418
+    },
+    {
+      "wmo_id": 5900029,
+      "platform_type": "NOVA",
+      "country": "Germany",
+      "deployment_date": "2025-09-16T14:57:56",
+      "status": "ACTIVE",
+      "cycle_count": 178,
+      "sensor_payload": [
+        "CTD_PRES",
+        "CTD_TEMP",
+        "CTD_PSAL"
+      ],
+      "last_latitude": 5.035412667551228,
+      "last_longitude": -115.82030788698539
+    }
+  ]
+}

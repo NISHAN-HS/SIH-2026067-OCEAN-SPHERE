@@ -1,0 +1,79 @@
+{
+  "selected_best_model": "Gradient Boosting",
+  "test_rmse": 2.711,
+  "all_results": {
+    "Random Forest": {
+      "regression_metrics": {
+        "mae": 2.35,
+        "rmse": 3.04,
+        "r2": 0.9304
+      },
+      "classification_metrics": {
+        "accuracy": 0.97,
+        "precision": 0.9686,
+        "recall": 0.97,
+        "f1_score": 0.9692
+      }
+    },
+    "Gradient Boosting": {
+      "regression_metrics": {
+        "mae": 2.145,
+        "rmse": 2.711,
+        "r2": 0.9447
+      },
+      "classification_metrics": {
+        "accuracy": 0.9738,
+        "precision": 0.9729,
+        "recall": 0.9738,
+        "f1_score": 0.9733
+      }
+    },
+    "XGBoost": {
+      "regression_metrics": {
+        "mae": 2.183,
+        "rmse": 2.765,
+        "r2": 0.9425
+      },
+      "classification_metrics": {
+        "accuracy": 0.9776,
+        "precision": 0.9765,
+        "recall": 0.9776,
+        "f1_score": 0.9768
+      }
+    },
+    "LightGBM": {
+      "regression_metrics": {
+        "mae": 2.806,
+        "rmse": 4.518,
+        "r2": 0.8464
+      },
+      "classification_metrics": {
+        "accuracy": 0.9624,
+        "precision": 0.96,
+        "recall": 0.9624,
+        "f1_score": 0.9605
+      }
+    }
+  },
+  "feature_names": [
+    "latitude",
+    "longitude",
+    "depth_m",
+    "forecast_temperature",
+    "forecast_salinity",
+    "forecast_current",
+    "forecast_ssh",
+    "month",
+    "time_diff_hours",
+    "observation_density",
+    "region_id",
+    "season",
+    "ocean_basin",
+    "source_type"
+  ],
+  "categories": [
+    "High Reliability",
+    "Low Reliability",
+    "Medium Reliability"
+  ]
+}
