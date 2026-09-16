@@ -12,6 +12,7 @@ import { AlertsPage } from './pages/Alerts/AlertsPage';
 import { RegionsPage } from './pages/Regions/RegionsPage';
 import { ModelAnalyticsPage } from './pages/ModelAnalytics/ModelAnalyticsPage';
 import { ReportsPage } from './pages/Reports/ReportsPage';
+import { ShipRoutingPage } from './pages/ShipRouting/ShipRoutingPage';
 import { AboutPage } from './pages/About/AboutPage';
 
 const AppContent: React.FC = () => {
@@ -38,6 +39,7 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/globe" element={<GlobePage />} />
           <Route path="/reliability" element={<ReliabilityPage />} />
+          <Route path="/routing" element={<ShipRoutingPage />} />
           <Route path="/forecast" element={<ForecastPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/regions" element={<RegionsPage />} />

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   MapPin,
   Copy,
@@ -11,12 +12,15 @@ import {
   AlertTriangle,
   TrendingUp,
   Activity,
-  Layers,
-  ChevronDown,
-  ChevronUp,
-  Sliders,
-  ExternalLink,
-  Scale
+  Scale,
+  X,
+  Radio,
+  Bell,
+  BellOff,
+  Clock,
+  ChevronRight,
+  Zap,
+  Navigation,
 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
 import { SelectedLocationData, AlertItem } from '../../types';
@@ -24,20 +28,65 @@ import { SelectedLocationData, AlertItem } from '../../types';
 interface RightIntelligencePanelProps {
   selectedLocation: SelectedLocationData;
   alerts?: AlertItem[];
+  newAlertIds?: Set<number>;
+  alertsLastUpdated?: Date;
   onOpenProfile?: () => void;
   onOpenCompare?: () => void;
   onSelectAlert?: (alert: AlertItem) => void;
+  onDismissAlert?: (id: number) => void;
+}
+
+type SeverityFilter = 'ALL' | 'CRITICAL' | 'WARNING';
+
+// Format a date to "X sec/min ago" relative label
+function timeAgo(date: Date): string {
+  const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (diff < 5) return 'just now';
+  if (diff < 60) return `${diff}s ago`;
+  const m = Math.floor(diff / 60);
+  if (m < 60) return `${m}m ago`;
+  return `${Math.floor(m / 60)}h ago`;
+}
+
+function alertTimestamp(ts: string): string {
+  if (!ts) return 'live';
+  try {
+    return timeAgo(new Date(ts));
+  } catch {
+    return 'live';
+  }
 }
 
 export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
   selectedLocation,
   alerts = [],
+  newAlertIds = new Set(),
+  alertsLastUpdated,
   onOpenProfile,
   onOpenCompare,
   onSelectAlert,
+  onDismissAlert,
 }) => {
   const [copied, setCopied] = useState(false);
   const [activeInsightTab, setActiveInsightTab] = useState<'temp' | 'current' | 'reliability'>('temp');
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('ALL');
+  const [mutedAlerts, setMutedAlerts] = useState<Set<number>>(new Set());
+  const [isMuted, setIsMuted] = useState(false);
+  const [tick, setTick] = useState(0);
+  const feedRef = useRef<HTMLDivElement>(null);
+
+  // Re-render every second to update "X sec ago" timestamps
+  useEffect(() => {
+    const t = setInterval(() => setTick(v => v + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Auto-scroll to top when a new alert arrives
+  useEffect(() => {
+    if (feedRef.current && newAlertIds.size > 0) {
+      feedRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [newAlertIds.size]);
 
   const handleCopyCoords = () => {
     const coordStr = `${selectedLocation.latitude.toFixed(4)}° N, ${selectedLocation.longitude.toFixed(4)}° E`;
@@ -46,7 +95,21 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Mock Trend Chart Data based on selected depth / location
+  const handleDismiss = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    setMutedAlerts(prev => new Set([...prev, id]));
+    onDismissAlert?.(id);
+  };
+
+  // Filter
+  const visibleAlerts = alerts
+    .filter(a => !mutedAlerts.has(a.id))
+    .filter(a => severityFilter === 'ALL' || a.severity === severityFilter);
+
+  const critCount = alerts.filter(a => a.severity === 'CRITICAL' && !mutedAlerts.has(a.id)).length;
+  const warnCount = alerts.filter(a => a.severity === 'WARNING' && !mutedAlerts.has(a.id)).length;
+
+  // Depth trend data
   const depthTrendData = [
     { depth: 0, temp: selectedLocation.temperature, velocity: selectedLocation.currentSpeed, reliability: selectedLocation.reliabilityScore },
     { depth: 50, temp: selectedLocation.temperature - 1.2, velocity: selectedLocation.currentSpeed * 0.85, reliability: selectedLocation.reliabilityScore - 1 },
@@ -54,43 +117,19 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
     { depth: 500, temp: selectedLocation.temperature - 12.1, velocity: selectedLocation.currentSpeed * 0.3, reliability: selectedLocation.reliabilityScore - 3 },
     { depth: 1000, temp: 8.4, velocity: 0.12, reliability: selectedLocation.reliabilityScore - 1 },
     { depth: 2000, temp: 4.1, velocity: 0.05, reliability: selectedLocation.reliabilityScore },
-    { depth: 3000, temp: 2.3, velocity: 0.02, reliability: selectedLocation.reliabilityScore + 1 }
+    { depth: 3000, temp: 2.3, velocity: 0.02, reliability: selectedLocation.reliabilityScore + 1 },
   ];
 
-  // Reliability Badge Color Logic
   const getReliabilityStyle = (score: number) => {
-    if (score >= 80) {
-      return {
-        bg: 'bg-emerald-50',
-        border: 'border-emerald-200',
-        text: 'text-emerald-700',
-        badgeBg: 'bg-emerald-500',
-        label: 'High Reliability'
-      };
-    } else if (score >= 60) {
-      return {
-        bg: 'bg-amber-50',
-        border: 'border-amber-200',
-        text: 'text-amber-700',
-        badgeBg: 'bg-amber-500',
-        label: 'Moderate Reliability'
-      };
-    } else {
-      return {
-        bg: 'bg-rose-50',
-        border: 'border-rose-200',
-        text: 'text-rose-700',
-        badgeBg: 'bg-rose-500',
-        label: 'Low Reliability'
-      };
-    }
+    if (score >= 80) return { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badgeBg: 'bg-emerald-500', label: 'High Reliability' };
+    if (score >= 60) return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badgeBg: 'bg-amber-500', label: 'Moderate Reliability' };
+    return { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', badgeBg: 'bg-rose-500', label: 'Low Reliability' };
   };
-
   const relStyle = getReliabilityStyle(selectedLocation.reliabilityScore);
 
   return (
     <aside className="w-[350px] shrink-0 h-[calc(100vh-70px-44px)] overflow-y-auto pl-1 space-y-3.5 scrollbar-thin select-none">
-      
+
       {/* 1. SELECTED LOCATION HEADER CARD */}
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
@@ -100,7 +139,7 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
           </div>
           <button
             onClick={handleCopyCoords}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-600 transition-colors flex items-center gap-1 text-[11px]"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-600 transition-colors"
             title="Copy Coordinates"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -113,7 +152,6 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
               {selectedLocation.latitude.toFixed(4)}° N, {selectedLocation.longitude.toFixed(4)}° E
             </span>
           </div>
-          
           <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
             <Waves className="w-3.5 h-3.5 text-ocean-500" />
             <span>{selectedLocation.oceanName}</span>
@@ -125,88 +163,53 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons: View Profile & Compare */}
         <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-100">
-          <button
-            onClick={onOpenProfile}
-            className="py-2 px-3 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all hover:scale-102"
-          >
+          <button onClick={onOpenProfile} className="py-2 px-3 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all hover:scale-102">
             <TrendingUp className="w-3.5 h-3.5" />
             <span>View Profile</span>
           </button>
-          <button
-            onClick={onOpenCompare}
-            className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 flex items-center justify-center gap-1.5 transition-all"
-          >
+          <button onClick={onOpenCompare} className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 flex items-center justify-center gap-1.5 transition-all">
             <Scale className="w-3.5 h-3.5 text-slate-500" />
             <span>Compare</span>
           </button>
+        </div>
+        <div className="mt-2">
+          <Link
+            to="/routing"
+            className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-extrabold shadow-sm flex items-center justify-center gap-2 transition-all hover:scale-101"
+          >
+            <Navigation className="w-3.5 h-3.5 text-emerald-200 animate-pulse" />
+            <span>Smart Ship Routing Engine</span>
+          </Link>
         </div>
       </div>
 
       {/* 2. OCEAN PARAMETERS CARD */}
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
-          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
-            Ocean Parameters
-          </h3>
+          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">Ocean Parameters</h3>
           <span className="text-[10px] font-semibold text-slate-400">HYCOM + ARGO</span>
         </div>
-
         <div className="space-y-2.5 text-xs">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="flex items-center gap-2 text-slate-600 font-medium">
-              <Thermometer className="w-4 h-4 text-rose-500" />
-              Temperature
-            </span>
-            <span className="font-bold font-mono text-slate-900 text-sm">
-              {selectedLocation.temperature.toFixed(1)} °C
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="flex items-center gap-2 text-slate-600 font-medium">
-              <Droplets className="w-4 h-4 text-cyan-500" />
-              Salinity
-            </span>
-            <span className="font-bold font-mono text-slate-900 text-sm">
-              {selectedLocation.salinity.toFixed(1)} PSU
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="flex items-center gap-2 text-slate-600 font-medium">
-              <Waves className="w-4 h-4 text-sky-500" />
-              Wave Height
-            </span>
-            <span className="font-bold font-mono text-slate-900 text-sm">
-              {selectedLocation.waveHeight.toFixed(1)} m
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="flex items-center gap-2 text-slate-600 font-medium">
-              <Wind className="w-4 h-4 text-indigo-500" />
-              Current Speed
-            </span>
-            <span className="font-bold font-mono text-slate-900 text-sm">
-              {selectedLocation.currentSpeed.toFixed(2)} m/s ({selectedLocation.currentDirection}°)
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="flex items-center gap-2 text-slate-600 font-medium">
-              <Activity className="w-4 h-4 text-teal-500" />
-              Ocean Depth
-            </span>
-            <span className="font-bold font-mono text-slate-900 text-sm">
-              {selectedLocation.depth} m
-            </span>
-          </div>
+          {[
+            { icon: Thermometer, color: 'text-rose-500', label: 'Temperature', val: `${selectedLocation.temperature.toFixed(1)} °C` },
+            { icon: Droplets, color: 'text-cyan-500', label: 'Salinity', val: `${selectedLocation.salinity.toFixed(1)} PSU` },
+            { icon: Waves, color: 'text-sky-500', label: 'Wave Height', val: `${selectedLocation.waveHeight.toFixed(1)} m` },
+            { icon: Wind, color: 'text-indigo-500', label: 'Current Speed', val: `${selectedLocation.currentSpeed.toFixed(2)} m/s (${selectedLocation.currentDirection}°)` },
+            { icon: Activity, color: 'text-teal-500', label: 'Ocean Depth', val: `${selectedLocation.depth} m` },
+          ].map(({ icon: Icon, color, label, val }) => (
+            <div key={label} className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+              <span className={`flex items-center gap-2 text-slate-600 font-medium`}>
+                <Icon className={`w-4 h-4 ${color}`} />
+                {label}
+              </span>
+              <span className="font-bold font-mono text-slate-900 text-sm">{val}</span>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 3. RELIABILITY & RISK ASSESSMENT CARD (Core Innovation) */}
+      {/* 3. RELIABILITY CARD */}
       <div className={`rounded-2xl border ${relStyle.border} ${relStyle.bg} p-4 shadow-sm text-slate-800 space-y-3`}>
         <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
           <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900">
@@ -217,7 +220,6 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
             {relStyle.label}
           </span>
         </div>
-
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[11px] text-slate-500 uppercase font-semibold block">Reliability Score</span>
@@ -227,12 +229,9 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
           </div>
           <div className="text-right">
             <span className="text-[11px] text-slate-500 uppercase font-semibold block">Forecast Accuracy</span>
-            <span className="text-base font-bold text-slate-800 font-mono">
-              {selectedLocation.forecastAccuracy.toFixed(1)}%
-            </span>
+            <span className="text-base font-bold text-slate-800 font-mono">{selectedLocation.forecastAccuracy.toFixed(1)}%</span>
           </div>
         </div>
-
         <div className="space-y-1.5 text-xs border-t border-slate-200/60 pt-2.5">
           <div className="flex justify-between">
             <span className="text-slate-600">Confidence Level:</span>
@@ -249,43 +248,145 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
         </div>
       </div>
 
-      {/* 4. LIVE ALERTS & ANOMALIES CARD */}
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900">
-            <AlertTriangle className="w-4 h-4 text-rose-500" />
-            <span>Live Alerts Feed</span>
+      {/* 4. LIVE ALERTS FEED */}
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm text-slate-800 overflow-hidden">
+        {/* Header */}
+        <div className="px-4 pt-3.5 pb-2.5 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              {/* Live pulse dot */}
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
+              </span>
+              <span className="font-bold text-xs uppercase tracking-wider text-slate-900">Live Alerts Feed</span>
+              <Radio className="w-3.5 h-3.5 text-rose-500" />
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMuted(m => !m)}
+                className={`p-1 rounded-lg transition-colors ${isMuted ? 'bg-slate-200 text-slate-500' : 'bg-rose-50 text-rose-500 hover:bg-rose-100'}`}
+                title={isMuted ? 'Unmute alerts' : 'Mute alerts'}
+              >
+                {isMuted ? <BellOff className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+              </button>
+              <div className="text-[10px] font-bold rounded-full px-2 py-0.5 bg-rose-50 border border-rose-200 text-rose-700">
+                {visibleAlerts.length} active
+              </div>
+            </div>
           </div>
-          <span className="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
-            {alerts.length} Active
-          </span>
-        </div>
 
-        <div className="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
-          {alerts.length > 0 ? (
-            alerts.slice(0, 5).map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => onSelectAlert && onSelectAlert(item)}
-                className={`p-2.5 rounded-xl border flex items-start gap-2.5 cursor-pointer hover:scale-102 transition-all shadow-xs ${
-                  item.severity === 'CRITICAL'
-                    ? 'bg-rose-50/90 hover:bg-rose-100/90 border-rose-200 text-rose-900'
-                    : 'bg-amber-50/90 hover:bg-amber-100/90 border-amber-200 text-amber-900'
+          {/* Last updated */}
+          <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-2">
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>Updated {alertsLastUpdated ? timeAgo(alertsLastUpdated) : '—'} · polling every 8s</span>
+            </div>
+            {newAlertIds.size > 0 && (
+              <span className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 border border-amber-300 rounded-full text-amber-700 font-bold animate-pulse">
+                <Zap className="w-2.5 h-2.5" />
+                {newAlertIds.size} new
+              </span>
+            )}
+          </div>
+
+          {/* Severity filter tabs */}
+          <div className="flex gap-1">
+            {(['ALL', 'CRITICAL', 'WARNING'] as SeverityFilter[]).map(f => (
+              <button
+                key={f}
+                onClick={() => setSeverityFilter(f)}
+                className={`flex-1 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide transition-all ${
+                  severityFilter === f
+                    ? f === 'CRITICAL'
+                      ? 'bg-rose-500 text-white shadow-sm'
+                      : f === 'WARNING'
+                      ? 'bg-amber-500 text-white shadow-sm'
+                      : 'bg-ocean-600 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                 }`}
               >
-                <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between font-bold text-[11px]">
-                    <span>{item.alert_type}</span>
-                    <span className="text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-white/70">{item.severity}</span>
+                {f === 'ALL' ? `All (${alerts.length})` : f === 'CRITICAL' ? `🔴 Crit (${critCount})` : `🟡 Warn (${warnCount})`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Scrollable feed */}
+        <div ref={feedRef} className="space-y-0 max-h-64 overflow-y-auto">
+          {visibleAlerts.length > 0 ? (
+            visibleAlerts.map((item) => {
+              const isNew = newAlertIds.has(item.id);
+              const isCritical = item.severity === 'CRITICAL';
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => onSelectAlert?.(item)}
+                  className={`relative px-3.5 py-2.5 border-b border-slate-100 last:border-b-0 cursor-pointer group transition-all duration-200 ${
+                    isCritical
+                      ? 'hover:bg-rose-50/70'
+                      : 'hover:bg-amber-50/70'
+                  } ${isNew ? (isCritical ? 'bg-rose-50/50' : 'bg-amber-50/40') : 'bg-white'}`}
+                >
+                  {/* NEW badge flash */}
+                  {isNew && (
+                    <span className={`absolute left-0 top-0 bottom-0 w-0.5 rounded-r ${isCritical ? 'bg-rose-500' : 'bg-amber-400'} animate-pulse`} />
+                  )}
+
+                  <div className="flex items-start gap-2.5">
+                    {/* Severity icon */}
+                    <div className={`mt-0.5 shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
+                      isCritical ? 'bg-rose-100' : 'bg-amber-100'
+                    }`}>
+                      <AlertTriangle className={`w-3 h-3 ${isCritical ? 'text-rose-600' : 'text-amber-600'}`} />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <span className="text-[11px] font-extrabold text-slate-900 truncate">{item.alert_type}</span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {isNew && (
+                            <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                              isCritical ? 'bg-rose-500 text-white' : 'bg-amber-500 text-white'
+                            } animate-pulse`}>NEW</span>
+                          )}
+                          <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                            isCritical ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+                          }`}>{item.severity}</span>
+                          <button
+                            onClick={(e) => handleDismiss(e, item.id)}
+                            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-all"
+                            title="Dismiss alert"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <p className="text-[10px] text-slate-500 leading-snug line-clamp-2 mb-1">{item.description}</p>
+
+                      <div className="flex items-center justify-between text-[9px] font-medium text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-2.5 h-2.5" />
+                          {item.region_id} · {item.latitude?.toFixed(1)}°N {item.longitude?.toFixed(1)}°E
+                        </span>
+                        <span className="flex items-center gap-0.5">
+                          <Clock className="w-2.5 h-2.5" />
+                          {alertTimestamp(item.timestamp)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0 mt-1 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <p className="text-[10px] text-slate-600 mt-0.5 line-clamp-2">{item.description}</p>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 text-center text-[11px]">
-              No active divergence alerts in selected region.
+            <div className="py-8 text-center text-slate-400 text-xs space-y-1">
+              <ShieldCheck className="w-8 h-8 mx-auto text-emerald-300" />
+              <p className="font-semibold">No active alerts</p>
+              <p className="text-[10px]">All ocean forecast parameters within tolerance.</p>
             </div>
           )}
         </div>
@@ -294,81 +395,54 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
       {/* 5. QUICK INSIGHTS TREND CHARTS */}
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-sm p-4 text-slate-800 space-y-3">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
-            Quick Insights
-          </h3>
-          
+          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">Quick Insights</h3>
           <div className="flex items-center gap-1 text-[10px] font-semibold">
-            <button
-              onClick={() => setActiveInsightTab('temp')}
-              className={`px-2 py-0.5 rounded-md transition-colors ${
-                activeInsightTab === 'temp' ? 'bg-ocean-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'
-              }`}
-            >
-              Temp
-            </button>
-            <button
-              onClick={() => setActiveInsightTab('current')}
-              className={`px-2 py-0.5 rounded-md transition-colors ${
-                activeInsightTab === 'current' ? 'bg-ocean-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'
-              }`}
-            >
-              Currents
-            </button>
-            <button
-              onClick={() => setActiveInsightTab('reliability')}
-              className={`px-2 py-0.5 rounded-md transition-colors ${
-                activeInsightTab === 'reliability' ? 'bg-ocean-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'
-              }`}
-            >
-              Reliability
-            </button>
+            {(['temp', 'current', 'reliability'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveInsightTab(tab)}
+                className={`px-2 py-0.5 rounded-md transition-colors capitalize ${
+                  activeInsightTab === tab ? 'bg-ocean-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                {tab === 'temp' ? 'Temp' : tab === 'current' ? 'Currents' : 'Reliability'}
+              </button>
+            ))}
           </div>
         </div>
-
-        {/* Chart View */}
         <div className="h-32 w-full pt-1">
           <ResponsiveContainer width="100%" height="100%">
             {activeInsightTab === 'temp' ? (
               <AreaChart data={depthTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(val) => `${val}m`} />
+                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(v) => `${v}m`} />
                 <YAxis stroke="#94a3b8" fontSize={9} domain={['auto', 'auto']} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
-                  formatter={(val: any) => [`${Number(val).toFixed(1)} °C`, 'Temperature']}
-                />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }} formatter={(v: any) => [`${Number(v).toFixed(1)} °C`, 'Temperature']} />
                 <Area type="monotone" dataKey="temp" stroke="#f43f5e" strokeWidth={2} fillOpacity={1} fill="url(#tempGrad)" />
               </AreaChart>
             ) : activeInsightTab === 'current' ? (
               <AreaChart data={depthTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="currGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(val) => `${val}m`} />
+                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(v) => `${v}m`} />
                 <YAxis stroke="#94a3b8" fontSize={9} domain={[0, 'auto']} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
-                  formatter={(val: any) => [`${Number(val).toFixed(2)} m/s`, 'Speed']}
-                />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }} formatter={(v: any) => [`${Number(v).toFixed(2)} m/s`, 'Speed']} />
                 <Area type="monotone" dataKey="velocity" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#currGrad)" />
               </AreaChart>
             ) : (
               <LineChart data={depthTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(val) => `${val}m`} />
+                <XAxis dataKey="depth" stroke="#94a3b8" fontSize={9} tickFormatter={(v) => `${v}m`} />
                 <YAxis stroke="#94a3b8" fontSize={9} domain={[50, 100]} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
-                  formatter={(val: any) => [`${Number(val).toFixed(1)}%`, 'Reliability']}
-                />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }} formatter={(v: any) => [`${Number(v).toFixed(1)}%`, 'Reliability']} />
                 <Line type="monotone" dataKey="reliability" stroke="#10b981" strokeWidth={2.5} dot={{ r: 3 }} />
               </LineChart>
             )}

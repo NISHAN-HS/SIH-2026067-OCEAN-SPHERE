@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Waves, Globe, BarChart3, AlertTriangle, ShieldCheck, Cpu, FileText, Info, RefreshCw } from 'lucide-react';
+import { Waves, Globe, BarChart3, AlertTriangle, ShieldCheck, Navigation, Cpu, FileText, Info, RefreshCw } from 'lucide-react';
 
 interface NavbarProps {
   onRefresh?: () => void;
@@ -29,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onRefresh, isRefreshing = false 
     { path: '/', label: 'Home', icon: Waves },
     { path: '/globe', label: 'Globe', icon: Globe },
     { path: '/reliability', label: 'Reliability', icon: ShieldCheck },
+    { path: '/routing', label: 'Smart Routing', icon: Navigation },
     { path: '/forecast', label: 'Forecast', icon: BarChart3 },
     { path: '/alerts', label: 'Alerts', icon: AlertTriangle },
     { path: '/regions', label: 'Regions', icon: Globe },

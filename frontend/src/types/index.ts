@@ -170,3 +170,80 @@ export interface PredictResponse {
   timestamp: string;
 }
 
+export interface PortLocation {
+  id: string;
+  name: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  region_id: string;
+  type: 'Major Commercial' | 'Naval Base' | 'Transshipment' | 'Regional Port';
+  depth_m: number;
+  description: string;
+}
+
+export interface VesselProfile {
+  id: string;
+  name: string;
+  category: 'Container' | 'Oil Tanker' | 'Bulk Carrier' | 'Naval Patrol' | 'Research Vessel' | 'Trawler';
+  default_speed_knots: number;
+  draft_m: number;
+  fuel_rate_tons_per_day: number;
+  max_wave_height_m: number;
+  icon_name: string;
+}
+
+export interface RouteWaypoint {
+  step: number;
+  latitude: number;
+  longitude: number;
+  name: string;
+  distance_from_start_nm: number;
+  leg_distance_nm: number;
+  heading_deg: number;
+  expected_speed_knots: number;
+  wave_height_m: number;
+  current_speed_knots: number;
+  current_dir_deg: number;
+  temperature_c: number;
+  reliability_score: number;
+  risk_level: 'Low Risk' | 'Moderate Risk' | 'High Risk' | 'Critical Hazard';
+  advisory: string;
+}
+
+export interface ShipRouteResult {
+  route_id: string;
+  optimization_mode: 'reliability' | 'eco' | 'express';
+  origin_port: PortLocation;
+  destination_port: PortLocation;
+  vessel: VesselProfile;
+  total_distance_nm: number;
+  estimated_transit_hours: number;
+  eta_formatted: string;
+  average_speed_knots: number;
+  average_reliability_score: number;
+  fuel_consumption_tons: number;
+  co2_emissions_tons: number;
+  overall_risk: 'Low Operational Risk' | 'Moderate Risk' | 'High Risk';
+  hazard_zones_bypassed: number;
+  fuel_saved_tons_vs_direct: number;
+  hours_saved_vs_direct: number;
+  waypoints: RouteWaypoint[];
+  direct_distance_nm: number;
+  direct_waypoints: Array<{ latitude: number; longitude: number }>;
+  google_maps_url: string;
+  google_earth_url: string;
+}
+
+export interface RoutingRequest {
+  origin_port_id: string;
+  destination_port_id: string;
+  vessel_id: string;
+  optimization_mode: 'reliability' | 'eco' | 'express';
+  custom_speed_knots?: number;
+  avoid_high_waves?: boolean;
+  avoid_low_reliability?: boolean;
+  avoid_active_alerts?: boolean;
+}
+
+
