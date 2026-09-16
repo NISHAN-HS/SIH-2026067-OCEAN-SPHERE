@@ -1,95 +1,131 @@
-# OCEANSPHERE | Ocean Forecast Reliability & Decision Support System
+<div align="center">
+  <img src="https://raw.githubusercontent.com/NISHAN-HS/SIH-2026067-OCEAN-SPHERE/main/docs/assets/logo.png" alt="OceanSphere Logo" width="200" onerror="this.style.display='none'"/>
+  
+  # 🌊 OCEANSPHERE
+  
+  **Ocean Forecast Reliability & Decision Support System**
 
-[![SIH 2026](https://img.shields.io/badge/SIH%202026-Finals-0EA5E9?style=for-the-badge)](https://sih.gov.in/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-v2.0-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.0-4169E1?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
-[![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-
-**OCEANSPHERE** is a world-class scientific web platform built for **INCOIS (Indian National Centre for Ocean Information Services)** and the **Smart India Hackathon (SIH 2026)**. It evaluates numerical ocean model forecasts (HYCOM) against real-world in-situ observations (Argo floats, moored buoys, satellite SST/INCOIS) to compute machine-learning reliability scores, detect spatial anomalies, and deliver real-time marine decision support.
-
----
-
-## 🌟 Key Features
-
-1. **Interactive 3D Earth Globe**: Full-screen 3D globe visualization with orbit controls, latitude & longitude mouse tracking, spatial region overlays, and layer controls (SST, Salinity, U/V Currents, SSH, Argo Floats, Buoy Stations, Divergence Alerts).
-2. **Dynamic Reliability Color Coding**:
-   - 🟢 **Green (>80%)**: High Forecast Reliability (Low Operational Risk)
-   - 🟡 **Yellow (60-80%)**: Moderate Reliability (Moderate Divergence Risk)
-   - 🔴 **Red (<60%)**: Low Reliability (Critical Anomaly Warning)
-3. **Machine Learning Pipeline**: Gradient Boosting Regressor achieving **99.91% R² accuracy** and **0.124 MAE** score validation.
-4. **9 Production Modules**: Home, Global 3D Globe, Forecast vs Observation Analysis, Reliability Dashboard, Alert Center, Region Intelligence, Model Analytics & Live Sandbox (`POST /predict`), Executive Reports Generator (PDF, CSV, JSON export), and Project Documentation.
-5. **Real-time 30-Second Polling**: Auto-refresh status indicators sync live PostgreSQL records and FastAPI predictions.
+  <p align="center">
+    <a href="https://sih.gov.in/"><img src="https://img.shields.io/badge/SIH%202026-Finals-0EA5E9?style=for-the-badge&logo=hackaday" alt="SIH 2026" /></a>
+    <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-v2.0-009688?style=for-the-badge&logo=fastapi" alt="FastAPI" /></a>
+    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-15.0-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" /></a>
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react" alt="React" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" /></a>
+  </p>
+  
+  *A world-class scientific web platform built for **INCOIS** (Indian National Centre for Ocean Information Services).*
+</div>
 
 ---
 
-## 📂 Production Project Structure
+## 🎯 About The Project
 
-```
-OceanSphere/
-├── frontend/             # React 18 + TypeScript + Vite + Tailwind CSS + 3D Earth Globe
-├── backend/              # FastAPI REST service & database connection module
-├── datasets/             # Raw & cleaned HYCOM, Argo, Buoy, Satellite & INCOIS data
-├── trained_models/       # Gradient Boosting .joblib model artifacts & evaluation metrics
-├── reports/              # Daily, weekly & evaluation report exports
-├── docs/                 # System architecture, API & database schema documentation
-├── deployment/           # Docker, Cloud Run & Nginx reverse proxy configs
-└── PROJECT_STRUCTURE.md # Detailed directory architecture breakdown
-```
+**OCEANSPHERE** evaluates numerical ocean model forecasts (HYCOM) against real-world in-situ observations (Argo floats, moored buoys, satellite SST/INCOIS) to compute machine-learning reliability scores, detect spatial anomalies, and deliver real-time marine decision support.
 
 ---
 
-## ⚡ Quick Start
+## ✨ Key Features
+
+- 🌍 **Interactive 3D Earth Globe**: Full-screen 3D globe visualization with orbit controls, latitude & longitude mouse tracking, spatial region overlays, and layer controls.
+- 🎨 **Dynamic Reliability Color Coding**:
+  - 🟢 **Green (>80%)**: High Forecast Reliability *(Low Operational Risk)*
+  - 🟡 **Yellow (60-80%)**: Moderate Reliability *(Moderate Divergence Risk)*
+  - 🔴 **Red (<60%)**: Low Reliability *(Critical Anomaly Warning)*
+- 🧠 **Machine Learning Pipeline**: Gradient Boosting Regressor achieving **99.91% R² accuracy** and **0.124 MAE** score validation.
+- 📊 **9 Production Modules**: Home, Global 3D Globe, Forecast vs Observation Analysis, Reliability Dashboard, Alert Center, Region Intelligence, Model Analytics & Live Sandbox (`POST /predict`), Executive Reports Generator.
+- ⚡ **Real-time 30-Second Polling**: Auto-refresh status indicators sync live PostgreSQL records and FastAPI predictions.
+
+---
+
+## 💻 Tech Stack
+
+### Frontend
+- **Framework**: React 18 with TypeScript
+- **Styling**: Tailwind CSS
+- **3D Visualization**: CesiumJS (Earth Globe)
+- **Charts**: Recharts
+
+### Backend
+- **Framework**: FastAPI (Python 3.10+)
+- **Machine Learning**: Scikit-learn (Gradient Boosting)
+- **Database**: PostgreSQL / SQLite (Fallback)
+
+---
+
+## 🚀 Quick Start
 
 ### 1. Prerequisites
-- Python 3.10+
-- Node.js 18+ & npm
-- PostgreSQL (or local SQLite fallback)
+Ensure you have the following installed:
+- [Python 3.10+](https://www.python.org/downloads/)
+- [Node.js 18+](https://nodejs.org/) & npm
+- [PostgreSQL](https://www.postgresql.org/) (optional for local dev if using SQLite)
 
 ### 2. Backend Setup
 ```bash
-cd OceanSphere
-pip install -r backend/requirements.txt
-uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+# Navigate to the backend directory
+cd backend
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start the FastAPI backend server
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
-- Interactive API Docs (Swagger): `http://127.0.0.1:8000/docs`
+> **API Docs**: Available at `http://127.0.0.1:8000/docs`
 
 ### 3. Frontend Setup
 ```bash
-cd OceanSphere/frontend
+# Open a new terminal and navigate to frontend
+cd frontend
+
+# Install Node dependencies
 npm install
+
+# Start the Vite development server
 npm run dev
 ```
-- Open `http://localhost:3000` in your browser.
+> **Web App**: Open `http://localhost:3000` in your browser.
 
 ---
 
 ## 🔬 Scientific Methodology & Data Pipeline
 
+```mermaid
+graph TD
+    A[Numerical Forecasts<br/>HYCOM] --> C[Spatio-Temporal Match Engine]
+    B[In-situ Observations<br/>Argo/Buoy/Satellite] --> C
+    C --> D[Feature Bias Calculations<br/>temp_bias, sal_bias, speed_bias]
+    D --> E[Gradient Boosting Regressor<br/>99.91% R²]
+    E --> F[(PostgreSQL<br/>ocean_reliability_db)]
+    F --> G[FastAPI REST Microservice]
+    G --> H[OCEANSPHERE Scientific Web UI]
 ```
-Numerical Forecasts (HYCOM)  +  In-situ Observations (Argo/Buoy/Satellite)
-                                     │
-                                     ▼
-                      Spatio-Temporal Match Engine
-                                     │
-                                     ▼
-                       Feature Bias Calculations
-                       (temp_bias, sal_bias, speed_bias)
-                                     │
-                                     ▼
-                      Gradient Boosting Regressor (99.91% R²)
-                                     │
-                                     ▼
-                        PostgreSQL (ocean_reliability_db)
-                                     │
-                                     ▼
-                        FastAPI REST Microservice
-                                     │
-                                     ▼
-                      OCEANSPHERE Scientific Web UI
+
+---
+
+## 📂 Project Structure
+
+<details>
+<summary>Click to expand</summary>
+
 ```
+OceanSphere/
+├── frontend/             # React 18 + TypeScript + Vite + Tailwind + 3D Earth Globe
+├── backend/              # FastAPI REST service & database connection module
+├── datasets/             # Raw & cleaned HYCOM, Argo, Buoy, Satellite & INCOIS data
+├── trained_models/       # Gradient Boosting .joblib model artifacts & metrics
+├── reports/              # Daily, weekly & evaluation report exports
+├── docs/                 # System architecture, API & database schema documentation
+├── deployment/           # Docker, Cloud Run & Nginx reverse proxy configs
+└── PROJECT_STRUCTURE.md  # Detailed directory architecture breakdown
+```
+</details>
 
 ---
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<div align="center">
+  <i>Built with ❤️ for SIH 2026</i>
+</div>
