@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Settings, RefreshCw, Sun, Moon, Database, Cpu, Layers, Sliders, Check, ShieldCheck } from 'lucide-react';
 
 interface SystemSettingsModalProps {
@@ -30,9 +31,10 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
     }, 800);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg p-6 text-slate-800 dark:text-slate-100 space-y-5">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg p-6 text-slate-800 dark:text-slate-100 space-y-5 my-auto max-h-[90vh] overflow-y-auto">
+
         
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -171,6 +173,7 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

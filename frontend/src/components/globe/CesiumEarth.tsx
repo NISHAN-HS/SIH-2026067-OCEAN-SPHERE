@@ -668,6 +668,53 @@ export const CesiumEarth: React.FC<CesiumEarthProps> = ({
       });
     }
 
+    // 1.5 Ocean Surface Bathymetry & Surface Flow Layer Overlay
+    if (layers?.surface) {
+      // Arabian Sea Bathymetry Basin Surface Overlay
+      viewer.entities.add({
+        id: 'layer_surface_arabian',
+        position: Cesium.Cartesian3.fromDegrees(66.5, 14.5),
+        ellipse: {
+          semiMinorAxis: 580000.0,
+          semiMajorAxis: 680000.0,
+          material: Cesium.Color.fromCssColorString('rgba(14, 165, 233, 0.28)'),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#0EA5E9'),
+          outlineWidth: 2
+        },
+        label: {
+          text: '🌊 Ocean Surface Bathymetry\n(Arabian Basin: 0m - 3,800m)',
+          font: 'bold 11px Inter, sans-serif',
+          fillColor: Cesium.Color.fromCssColorString('#E0F2FE'),
+          outlineColor: Cesium.Color.fromCssColorString('#0369A1'),
+          outlineWidth: 3,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE
+        }
+      });
+
+      // Bay of Bengal Bathymetry Basin Surface Overlay
+      viewer.entities.add({
+        id: 'layer_surface_bengal',
+        position: Cesium.Cartesian3.fromDegrees(88.0, 13.0),
+        ellipse: {
+          semiMinorAxis: 520000.0,
+          semiMajorAxis: 620000.0,
+          material: Cesium.Color.fromCssColorString('rgba(2, 132, 199, 0.28)'),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#0284C7'),
+          outlineWidth: 2
+        },
+        label: {
+          text: '🌊 Ocean Surface Bathymetry\n(Bengal Fan: 0m - 4,200m)',
+          font: 'bold 11px Inter, sans-serif',
+          fillColor: Cesium.Color.fromCssColorString('#E0F2FE'),
+          outlineColor: Cesium.Color.fromCssColorString('#0369A1'),
+          outlineWidth: 3,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE
+        }
+      });
+    }
+
     // 2. Temperature Heatmap Overlay
     if (layers?.temperature) {
       viewer.entities.add({

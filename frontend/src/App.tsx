@@ -38,7 +38,7 @@ const AppContent: React.FC = () => {
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 selection:bg-ocean-500 selection:text-white ${isDarkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200'}`}>
       <Navbar onRefresh={handleGlobalRefresh} isRefreshing={isRefreshing} isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Routes>
           <Route path="/globe" element={<GlobePage />} />
           <Route path="/reliability" element={<ReliabilityPage />} />

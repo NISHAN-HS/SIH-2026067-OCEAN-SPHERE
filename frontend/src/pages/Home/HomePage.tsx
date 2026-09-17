@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { Bell, AlertTriangle, Navigation, X, ChevronRight } from 'lucide-react';
 import { TopNavbar } from '../../components/layout/TopNavbar';
 import { LeftScientificPanel } from '../../components/panels/LeftScientificPanel';
 import { CesiumEarth } from '../../components/globe/CesiumEarth';
@@ -6,6 +8,7 @@ import { RightIntelligencePanel } from '../../components/panels/RightIntelligenc
 import { BottomStatusBar } from '../../components/layout/BottomStatusBar';
 import { LocationProfileModal } from '../../components/modals/LocationProfileModal';
 import { RegionCompareModal } from '../../components/modals/RegionCompareModal';
+import { GlobalLayersModal } from '../../components/modals/GlobalLayersModal';
 import { useTheme } from '../../hooks/useTheme';
 
 import { getRegions, getReliability, getAlerts } from '../../services/api';
@@ -61,9 +64,12 @@ export const HomePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { isDarkMode, toggleTheme } = useTheme();
 
-  // Modal Dialog States
+  // Modal & Notification Banner States
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isCompareOpen, setIsCompareOpen] = useState<boolean>(false);
+  const [isLayersModalOpen, setIsLayersModalOpen] = useState<boolean>(false);
+  const [isNotificationBannerOpen, setIsNotificationBannerOpen] = useState<boolean>(true);
+  const [currentAlertIdx, setCurrentAlertIdx] = useState<number>(0);
 
   // Scientific Layer State
   const [layers, setLayers] = useState<LayerState>({
@@ -360,10 +366,7 @@ export const HomePage: React.FC = () => {
       {/* 1. TOP NAVIGATION BAR (Height: 70px) */}
       <TopNavbar
         onSearch={handleSearch}
-        onToggleLayers={() => {
-          const el = document.getElementById('layers-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
+        onToggleLayers={() => setIsLayersModalOpen(true)}
         onToggleTime={() => {
           handleTogglePlayback();
         }}
@@ -373,6 +376,63 @@ export const HomePage: React.FC = () => {
         dbOnline={true}
         modelActive={true}
       />
+
+      {/* SEPARATE LIVE ALERT NOTIFICATION BANNER AT TOP OF HOME PAGE */}
+      {isNotificationBannerOpen && (
+        <div className="mx-3 mt-2 flex items-center justify-between gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-950/95 via-slate-900/95 to-amber-950/95 border border-rose-500/40 text-white shadow-xl backdrop-blur-xl animate-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="relative flex h-3 w-3 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+            </div>
+            <span className="px-2 py-0.5 rounded-md bg-rose-500/20 border border-rose-500/40 text-[10px] font-extrabold uppercase tracking-wider text-rose-300 shrink-0 flex items-center gap-1">
+              <Bell className="w-3 h-3 text-rose-400 animate-bounce" />
+              <span>Live Alert Notification</span>
+            </span>
+            <p className="text-xs font-semibold text-slate-200 truncate">
+              {alerts.length > 0
+                ? `${alerts[currentAlertIdx % alerts.length]?.alert_type}: ${alerts[currentAlertIdx % alerts.length]?.description}`
+                : 'HYCOM vs Argo SST bias exceeds 2.8°C — high thermal divergence detected in Arabian Sea.'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {alerts.length > 1 && (
+              <button
+                onClick={() => setCurrentAlertIdx((prev) => (prev + 1) % alerts.length)}
+                className="px-2 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300 transition-colors"
+                title="Next Alert Notification"
+              >
+                Next Alert ({ (currentAlertIdx % alerts.length) + 1 }/{ alerts.length })
+              </button>
+            )}
+
+            <Link
+              to="/alerts"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold transition-all shadow-xs"
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>View All Alerts</span>
+            </Link>
+
+            <Link
+              to="/routing"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-600/80 hover:bg-sky-600 text-white text-[11px] font-bold transition-all shadow-xs"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              <span>Smart Ship Routing</span>
+            </Link>
+
+            <button
+              onClick={() => setIsNotificationBannerOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
+              title="Dismiss Notification Banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 2. THREE COLUMN SCIENTIFIC OPERATIONAL WORKSPACE */}
       <main className="flex-1 w-full flex gap-3 p-3 pb-[48px] overflow-hidden">
@@ -436,6 +496,13 @@ export const HomePage: React.FC = () => {
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}
         regions={regions}
+      />
+
+      <GlobalLayersModal
+        isOpen={isLayersModalOpen}
+        onClose={() => setIsLayersModalOpen(false)}
+        layers={layers}
+        onToggleLayer={handleToggleLayer}
       />
 
     </div>

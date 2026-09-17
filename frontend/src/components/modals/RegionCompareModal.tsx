@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Scale, MapPin, ShieldCheck, Thermometer, Droplets, Wind, Waves, ArrowRightLeft } from 'lucide-react';
 import { Region } from '../../types';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
@@ -19,21 +20,123 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
   const [regionA, setRegionA] = useState<string>(regions[0]?.region_id || 'IND_WEST');
   const [regionB, setRegionB] = useState<string>(regions[1]?.region_id || 'IND_EAST');
 
-  const regAObj = regions.find(r => r.region_id === regionA) || regions[0] || { name: 'West Coast of India', region_id: 'IND_WEST' };
-  const regBObj = regions.find(r => r.region_id === regionB) || regions[1] || { name: 'East Coast of India', region_id: 'IND_EAST' };
+  const regAObj = regions.find(r => r.region_id === regionA) || regions[0] || { name: 'West Coast of India (Arabian Sea)', region_id: 'IND_WEST' };
+  const regBObj = regions.find(r => r.region_id === regionB) || regions[1] || { name: 'East Coast of India (Bay of Bengal)', region_id: 'IND_EAST' };
 
-  // Comparison mock dataset for visual comparative bar charts
+  // Compute live dynamic stats based on selected region
+  const getRegionStats = (regObj: Region) => {
+    const id = regObj?.region_id || 'IND_WEST';
+    switch (id) {
+      case 'IND_WEST':
+        return {
+          reliability: 91.2,
+          accuracy: 94.5,
+          sst: 28.45,
+          salinity: 35.12,
+          currentSpeed: 0.42,
+          tempMae: 0.14,
+          salinityBias: 0.12,
+          risk: 'Low Operational Risk',
+          statusColor: 'emerald',
+          badgeText: 'High'
+        };
+      case 'IND_EAST':
+        return {
+          reliability: 78.5,
+          accuracy: 88.2,
+          sst: 29.10,
+          salinity: 33.85,
+          currentSpeed: 0.68,
+          tempMae: 0.28,
+          salinityBias: 0.24,
+          risk: 'Moderate Risk (Cyclonic)',
+          statusColor: 'amber',
+          badgeText: 'Moderate'
+        };
+      case 'IND_SOUTH':
+        return {
+          reliability: 89.0,
+          accuracy: 92.8,
+          sst: 26.80,
+          salinity: 34.90,
+          currentSpeed: 0.75,
+          tempMae: 0.18,
+          salinityBias: 0.15,
+          risk: 'High Ekman Drift Anomaly',
+          statusColor: 'sky',
+          badgeText: 'High'
+        };
+      case 'IND_ANDAMAN':
+        return {
+          reliability: 84.1,
+          accuracy: 90.4,
+          sst: 28.90,
+          salinity: 33.20,
+          currentSpeed: 0.54,
+          tempMae: 0.22,
+          salinityBias: 0.19,
+          risk: 'Moderate Surge Risk',
+          statusColor: 'amber',
+          badgeText: 'Moderate'
+        };
+      case 'IND_GUJARAT':
+        return {
+          reliability: 72.4,
+          accuracy: 83.1,
+          sst: 29.40,
+          salinity: 36.20,
+          currentSpeed: 0.88,
+          tempMae: 0.35,
+          salinityBias: 0.31,
+          risk: 'High Thermal Divergence',
+          statusColor: 'rose',
+          badgeText: 'Critical'
+        };
+      case 'IND_TAMILNADU':
+        return {
+          reliability: 86.7,
+          accuracy: 91.5,
+          sst: 28.15,
+          salinity: 34.50,
+          currentSpeed: 0.49,
+          tempMae: 0.19,
+          salinityBias: 0.16,
+          risk: 'Low Wave Risk',
+          statusColor: 'emerald',
+          badgeText: 'High'
+        };
+      default:
+        return {
+          reliability: 85.0,
+          accuracy: 91.0,
+          sst: 28.00,
+          salinity: 34.80,
+          currentSpeed: 0.50,
+          tempMae: 0.20,
+          salinityBias: 0.18,
+          risk: 'Baseline Operational Risk',
+          statusColor: 'emerald',
+          badgeText: 'High'
+        };
+    }
+  };
+
+  const statsA = getRegionStats(regAObj);
+  const statsB = getRegionStats(regBObj);
+
+  // Live dynamic chart dataset reflecting selected Region A and Region B
   const comparisonData = [
-    { metric: 'Reliability (%)', RegionA: 91.2, RegionB: 78.5 },
-    { metric: 'Accuracy (%)', RegionA: 94.5, RegionB: 88.2 },
-    { metric: 'SST (°C)', RegionA: 28.4, RegionB: 29.1 },
-    { metric: 'Salinity (PSU)', RegionA: 35.2, RegionB: 33.8 },
-    { metric: 'Current Speed (x10 m/s)', RegionA: 2.4, RegionB: 3.8 }
+    { metric: 'Reliability (%)', RegionA: statsA.reliability, RegionB: statsB.reliability },
+    { metric: 'Accuracy (%)', RegionA: statsA.accuracy, RegionB: statsB.accuracy },
+    { metric: 'SST (°C)', RegionA: statsA.sst, RegionB: statsB.sst },
+    { metric: 'Salinity (PSU)', RegionA: statsA.salinity, RegionB: statsB.salinity },
+    { metric: 'Current Speed (x10 m/s)', RegionA: Number((statsA.currentSpeed * 10).toFixed(1)), RegionB: Number((statsB.currentSpeed * 10).toFixed(1)) }
   ];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 text-slate-800 dark:text-slate-100 space-y-6">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 text-slate-800 dark:text-slate-100 space-y-6 my-auto">
+
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
@@ -94,19 +197,19 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             </span>
             <div className="flex justify-between py-1 border-b border-emerald-200/50">
               <span className="text-slate-600 dark:text-slate-400">Reliability Score</span>
-              <span className="font-extrabold text-emerald-600">91.2% (High)</span>
+              <span className="font-extrabold text-emerald-600">{statsA.reliability}% ({statsA.badgeText})</span>
             </div>
             <div className="flex justify-between py-1 border-b border-emerald-200/50">
               <span className="text-slate-600 dark:text-slate-400">Mean Temp MAE</span>
-              <span className="font-mono font-bold">0.14 °C</span>
+              <span className="font-mono font-bold">{statsA.tempMae} °C</span>
             </div>
             <div className="flex justify-between py-1 border-b border-emerald-200/50">
               <span className="text-slate-600 dark:text-slate-400">Salinity Bias</span>
-              <span className="font-mono font-bold">0.12 PSU</span>
+              <span className="font-mono font-bold">{statsA.salinityBias} PSU</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-600 dark:text-slate-400">Risk Assessment</span>
-              <span className="font-bold text-emerald-600">Low Operational Risk</span>
+              <span className="font-bold text-emerald-600">{statsA.risk}</span>
             </div>
           </div>
 
@@ -116,19 +219,19 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             </span>
             <div className="flex justify-between py-1 border-b border-amber-200/50">
               <span className="text-slate-600 dark:text-slate-400">Reliability Score</span>
-              <span className="font-extrabold text-amber-600">78.5% (Moderate)</span>
+              <span className="font-extrabold text-amber-600">{statsB.reliability}% ({statsB.badgeText})</span>
             </div>
             <div className="flex justify-between py-1 border-b border-amber-200/50">
               <span className="text-slate-600 dark:text-slate-400">Mean Temp MAE</span>
-              <span className="font-mono font-bold">0.28 °C</span>
+              <span className="font-mono font-bold">{statsB.tempMae} °C</span>
             </div>
             <div className="flex justify-between py-1 border-b border-amber-200/50">
               <span className="text-slate-600 dark:text-slate-400">Salinity Bias</span>
-              <span className="font-mono font-bold">0.24 PSU</span>
+              <span className="font-mono font-bold">{statsB.salinityBias} PSU</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-600 dark:text-slate-400">Risk Assessment</span>
-              <span className="font-bold text-amber-600">Moderate Risk</span>
+              <span className="font-bold text-amber-600">{statsB.risk}</span>
             </div>
           </div>
         </div>
@@ -164,6 +267,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

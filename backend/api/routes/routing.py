@@ -1,6 +1,7 @@
 import math
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Dict, Tuple
+from heapq import heappop, heappush
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
@@ -134,138 +135,241 @@ def calculate_bearing(lat1: float, lon1: float, lat2: float, lon2: float) -> flo
     return (bearing + 360.0) % 360.0
 
 
-# ── Marine Sea-Lane Waypoint Generator ────────────────────────────────────────
+# ── Water-Only Ocean Maritime Graph Pathfinder ────────────────────────────────
 
-def get_maritime_corridor(origin: PortSchema, dest: PortSchema) -> List[tuple[float, float, str]]:
+# Strict oceanic node dictionary: Guaranteed positions in sea water
+OCEAN_NODES: Dict[str, Tuple[float, float, str]] = {
+    # Port Fairways (Water-based outer harbor entry/exit points)
+    "BOM_OUTER": (18.75, 72.50, "Mumbai Outer Fairway"),
+    "MAA_OUTER": (13.15, 80.50, "Chennai Outer Anchorage"),
+    "COK_OUTER": (9.90, 75.95, "Cochin Sea Channel"),
+    "VTZ_OUTER": (17.65, 83.50, "Visakhapatnam Deepwater Approach"),
+    "CCU_OUTER": (20.90, 88.20, "Sandheads Anchorage (Hooghly River Exit)"),
+    "IXZ_OUTER": (11.60, 93.00, "Port Blair Outer Passage"),
+    "IXY_OUTER": (22.30, 68.80, "Gulf of Kutch Outer Fairway"),
+    "MRM_OUTER": (15.40, 73.40, "Goa Mormugao Outer Channel"),
+    "TCR_OUTER": (8.60, 78.40, "Tuticorin Outer Fairway"),
+    "CMB_OUTER": (6.95, 79.60, "Colombo Harbor Approach"),
+    "DXB_OUTER": (25.50, 55.00, "Jebel Ali Fairway"),
+    "SIN_OUTER": (1.20, 103.70, "Singapore Pilot Boarding Point"),
+    "MLE_OUTER": (4.15, 73.40, "Malé Atoll Pass"),
+    "MCT_OUTER": (23.70, 58.70, "Muscat Outer Anchorage"),
+
+    # West Coast Water Corridors
+    "N_ARABIAN_OFFSHORE": (21.50, 67.50, "North Arabian Sea Sea-Lane"),
+    "CENTRAL_ARABIAN_1": (18.00, 69.50, "Offshore Konkan Corridor"),
+    "CENTRAL_ARABIAN_2": (15.00, 71.50, "Central Arabian Sea Ocean Corridor"),
+    "SOUTH_ARABIAN_1": (12.00, 73.20, "Offshore Canara Pass"),
+    "LAKSHADWEEP_SEA": (9.50, 74.80, "Lakshadweep Deepwater Passage"),
+
+    # Southern Cape & Sri Lanka Bypass Nodes (Guarantees routing AROUND Southern India & Sri Lanka)
+    "CAPE_COMORIN_SOUTH": (7.00, 76.80, "Off Cape Comorin (Kanyakumari Passage)"),
+    "DONDRA_HEAD_SOUTH": (5.40, 80.60, "Off Dondra Head (South Sri Lanka Bypass)"),
+    "SRI_LANKA_EAST": (7.80, 82.50, "East Sri Lanka Offshore Sea-Lane"),
+
+    # East Coast Corridors
+    "GULF_MANNAR_DEEP": (7.80, 78.50, "Gulf of Mannar Deepwater Lane"),
+    "COROMANDEL_SOUTH": (10.50, 81.20, "Coromandel Offshore Corridor"),
+    "COROMANDEL_MID": (13.50, 81.80, "Mid Coromandel Sea-Lane"),
+    "ANDHRA_OFFSHORE": (16.50, 84.20, "Offshore Andhra Corridor"),
+    "ODISHA_OFFSHORE": (19.50, 87.00, "Offshore Odisha Channel"),
+
+    # Bay of Bengal & Andaman Sea
+    "CENTRAL_BOB_NORTH": (17.50, 88.00, "Central Bay of Bengal North"),
+    "CENTRAL_BOB_MID": (13.50, 87.50, "Central Bay of Bengal Ocean Highway"),
+    "CENTRAL_BOB_SOUTH": (9.00, 87.00, "Central Bay of Bengal South"),
+    "ANDAMAN_SEA_WEST": (11.00, 91.50, "West Andaman Sea Pass"),
+    "SIX_DEGREE_CHANNEL": (6.00, 93.80, "Six Degree Channel (Great Nicobar Pass)"),
+
+    # Southeast Asia & Straits
+    "MALACCA_NORTH": (5.20, 96.50, "Northern Malacca Strait Entrance"),
+    "MALACCA_MID": (3.00, 100.50, "Malacca Strait Deep Water Route"),
+
+    # Gulf of Oman & Hormuz
+    "HORMUZ_STRAIT": (26.30, 56.40, "Strait of Hormuz Chokepoint"),
+    "GULF_OMAN_DEEP": (24.20, 59.20, "Gulf of Oman Shipping Lane"),
+    "ARABIAN_OPEN_WEST": (20.00, 64.00, "Open Arabian Sea West Passage"),
+
+    # Maldives & Equatorial Indian Ocean
+    "MALDIVES_NORTH_PASS": (6.50, 72.80, "One and Half Degree Channel"),
+    "EQUATORIAL_INDIAN": (0.00, 75.00, "Equatorial Indian Ocean Transit"),
+}
+
+# Graph edges (connected ocean-water paths with distance costs in NM)
+OCEAN_EDGES: List[Tuple[str, str]] = [
+    # Port to Fairway connections
+    ("BOM_OUTER", "CENTRAL_ARABIAN_1"),
+    ("BOM_OUTER", "N_ARABIAN_OFFSHORE"),
+    ("IXY_OUTER", "N_ARABIAN_OFFSHORE"),
+    ("MRM_OUTER", "CENTRAL_ARABIAN_2"),
+    ("COK_OUTER", "SOUTH_ARABIAN_1"),
+    ("COK_OUTER", "LAKSHADWEEP_SEA"),
+    ("MAA_OUTER", "COROMANDEL_MID"),
+    ("VTZ_OUTER", "ANDHRA_OFFSHORE"),
+    ("CCU_OUTER", "ODISHA_OFFSHORE"),
+    ("CCU_OUTER", "CENTRAL_BOB_NORTH"),
+    ("IXZ_OUTER", "ANDAMAN_SEA_WEST"),
+    ("IXZ_OUTER", "SIX_DEGREE_CHANNEL"),
+    ("TCR_OUTER", "GULF_MANNAR_DEEP"),
+    ("CMB_OUTER", "DONDRA_HEAD_SOUTH"),
+    ("CMB_OUTER", "CAPE_COMORIN_SOUTH"),
+    ("DXB_OUTER", "HORMUZ_STRAIT"),
+    ("MCT_OUTER", "GULF_OMAN_DEEP"),
+    ("SIN_OUTER", "MALACCA_MID"),
+    ("MLE_OUTER", "MALDIVES_NORTH_PASS"),
+
+    # West Coast Ocean Highway
+    ("N_ARABIAN_OFFSHORE", "CENTRAL_ARABIAN_1"),
+    ("CENTRAL_ARABIAN_1", "CENTRAL_ARABIAN_2"),
+    ("CENTRAL_ARABIAN_2", "SOUTH_ARABIAN_1"),
+    ("SOUTH_ARABIAN_1", "LAKSHADWEEP_SEA"),
+    ("LAKSHADWEEP_SEA", "CAPE_COMORIN_SOUTH"),
+
+    # Southern India & Sri Lanka Ocean Bypass Ring
+    ("CAPE_COMORIN_SOUTH", "DONDRA_HEAD_SOUTH"),
+    ("CAPE_COMORIN_SOUTH", "GULF_MANNAR_DEEP"),
+    ("GULF_MANNAR_DEEP", "COROMANDEL_SOUTH"),
+    ("DONDRA_HEAD_SOUTH", "SRI_LANKA_EAST"),
+    ("SRI_LANKA_EAST", "COROMANDEL_SOUTH"),
+    ("SRI_LANKA_EAST", "COROMANDEL_MID"),
+
+    # East Coast Ocean Highway
+    ("COROMANDEL_SOUTH", "COROMANDEL_MID"),
+    ("COROMANDEL_MID", "ANDHRA_OFFSHORE"),
+    ("ANDHRA_OFFSHORE", "ODISHA_OFFSHORE"),
+    ("ODISHA_OFFSHORE", "CENTRAL_BOB_NORTH"),
+
+    # Central Bay of Bengal Mesh
+    ("COROMANDEL_MID", "CENTRAL_BOB_MID"),
+    ("ANDHRA_OFFSHORE", "CENTRAL_BOB_MID"),
+    ("ODISHA_OFFSHORE", "CENTRAL_BOB_MID"),
+    ("CENTRAL_BOB_NORTH", "CENTRAL_BOB_MID"),
+    ("CENTRAL_BOB_MID", "CENTRAL_BOB_SOUTH"),
+    ("SRI_LANKA_EAST", "CENTRAL_BOB_SOUTH"),
+    ("DONDRA_HEAD_SOUTH", "CENTRAL_BOB_SOUTH"),
+
+    # Malacca & Andaman Transit Lines
+    ("CENTRAL_BOB_SOUTH", "SIX_DEGREE_CHANNEL"),
+    ("ANDAMAN_SEA_WEST", "SIX_DEGREE_CHANNEL"),
+    ("SIX_DEGREE_CHANNEL", "MALACCA_NORTH"),
+    ("MALACCA_NORTH", "MALACCA_MID"),
+    ("CENTRAL_BOB_MID", "ANDAMAN_SEA_WEST"),
+
+    # Middle East & Gulf Routes
+    ("HORMUZ_STRAIT", "GULF_OMAN_DEEP"),
+    ("GULF_OMAN_DEEP", "ARABIAN_OPEN_WEST"),
+    ("ARABIAN_OPEN_WEST", "N_ARABIAN_OFFSHORE"),
+    ("ARABIAN_OPEN_WEST", "CENTRAL_ARABIAN_2"),
+
+    # Maldives & Equatorial Lines
+    ("CAPE_COMORIN_SOUTH", "MALDIVES_NORTH_PASS"),
+    ("MALDIVES_NORTH_PASS", "EQUATORIAL_INDIAN"),
+    ("DONDRA_HEAD_SOUTH", "EQUATORIAL_INDIAN"),
+    ("EQUATORIAL_INDIAN", "SIX_DEGREE_CHANNEL"),
+]
+
+# Map Port IDs directly to their outer fairway node
+PORT_FAIRWAY_MAP: Dict[str, str] = {
+    "BOM": "BOM_OUTER",
+    "MAA": "MAA_OUTER",
+    "COK": "COK_OUTER",
+    "VTZ": "VTZ_OUTER",
+    "CCU": "CCU_OUTER",
+    "IXZ": "IXZ_OUTER",
+    "IXY": "IXY_OUTER",
+    "MRM": "MRM_OUTER",
+    "TCR": "TCR_OUTER",
+    "CMB": "CMB_OUTER",
+    "DXB": "DXB_OUTER",
+    "SIN": "SIN_OUTER",
+    "MLE": "MLE_OUTER",
+    "MCT": "MCT_OUTER",
+}
+
+
+def find_water_only_path(origin_port: PortSchema, dest_port: PortSchema) -> List[Tuple[float, float, str]]:
     """
-    Generates realistic ocean sea-lane passage waypoints avoiding land masses
-    (e.g., bypassing southern India/Cape Comorin, Sri Lanka, Malacca Strait, Persian Gulf).
+    Uses Dijkstra's algorithm on the oceanic water graph to find the shortest
+    maritime sea-lane passage that strictly stays in ocean water and bypasses land.
     """
-    nodes: List[tuple[float, float, str]] = []
-    nodes.append((origin.latitude, origin.longitude, f"Departure: {origin.name}"))
+    start_node = PORT_FAIRWAY_MAP.get(origin_port.id, "BOM_OUTER")
+    end_node = PORT_FAIRWAY_MAP.get(dest_port.id, "MAA_OUTER")
 
-    west_ports = {'BOM', 'COK', 'MRM', 'IXY', 'DXB', 'MCT', 'MLE'}
-    east_ports = {'MAA', 'VTZ', 'CCU', 'TCR', 'IXZ', 'SIN'}
+    # Build adjacency list with distances
+    graph: Dict[str, List[Tuple[str, float]]] = {}
+    for n in OCEAN_NODES:
+        graph[n] = []
 
-    orig_is_west = origin.id in west_ports or (origin.longitude < 77.5 and origin.id != 'TCR')
-    dest_is_west = dest.id in west_ports or (dest.longitude < 77.5 and dest.id != 'TCR')
-    orig_is_east = origin.id in east_ports or (origin.longitude >= 77.5 or origin.id == 'TCR')
-    dest_is_east = dest.id in east_ports or (dest.longitude >= 77.5 or dest.id == 'TCR')
+    for u, v in OCEAN_EDGES:
+        if u in OCEAN_NODES and v in OCEAN_NODES:
+            pos_u = OCEAN_NODES[u]
+            pos_v = OCEAN_NODES[v]
+            dist = haversine_nm(pos_u[0], pos_u[1], pos_v[0], pos_v[1])
+            graph[u].append((v, dist))
+            graph[v].append((u, dist))
 
-    # 1. Specific origin exit waypoints
-    if origin.id == 'IXY':
-        nodes.append((22.3, 68.8, "Gulf of Kutch Outer Fairway"))
-    elif origin.id == 'DXB':
-        nodes.append((25.6, 56.4, "Strait of Hormuz Chokepoint"))
-        nodes.append((24.0, 59.0, "Gulf of Oman Approach"))
-        nodes.append((20.0, 65.0, "Central Arabian Sea Channel"))
-    elif origin.id == 'MCT':
-        nodes.append((23.5, 60.0, "Gulf of Oman Exit"))
-        nodes.append((20.0, 65.0, "Central Arabian Sea Channel"))
-    elif origin.id == 'CCU':
-        nodes.append((21.2, 88.2, "Hooghly River Exit"))
-        nodes.append((19.8, 87.0, "Offshore Odisha"))
-    elif origin.id == 'SIN':
-        nodes.append((2.8, 101.2, "Malacca Strait Corridor"))
-        nodes.append((5.2, 96.5, "Northern Malacca Strait Entrance"))
-        nodes.append((6.0, 93.5, "Six Degree Channel (Great Nicobar)"))
+    # Dijkstra Pathfinding
+    distances: Dict[str, float] = {n: float('inf') for n in OCEAN_NODES}
+    previous: Dict[str, Optional[str]] = {n: None for n in OCEAN_NODES}
+    distances[start_node] = 0.0
 
-    # 2. Inter-basin corridor: West <-> East
-    if orig_is_west and dest_is_east:
-        if origin.latitude > 15.0 and origin.id not in ['DXB', 'MCT']:
-            nodes.append((15.0, 72.5, "Offshore Konkan"))
-        if origin.latitude > 10.0:
-            nodes.append((9.8, 75.2, "Lakshadweep Sea Corridor"))
-        nodes.append((7.0, 76.8, "Off Cape Comorin (Kanyakumari Passage)"))
+    pq: List[Tuple[float, str]] = [(0.0, start_node)]
 
-        if dest.id == 'TCR':
-            nodes.append((7.8, 77.8, "Gulf of Mannar Approach"))
-        elif dest.id == 'CMB':
-            pass
-        else:
-            nodes.append((5.5, 80.6, "South Sri Lanka (Dondra Head)"))
-            if dest.latitude > 11.0 and dest.id not in ['IXZ', 'SIN']:
-                nodes.append((8.0, 82.0, "East Sri Lanka Offshore"))
-                if dest.latitude > 14.0:
-                    nodes.append((13.2, 81.5, "Coromandel Sea Lane"))
-                    if dest.latitude > 16.0:
-                        nodes.append((17.5, 84.5, "Offshore Visakhapatnam"))
-                        if dest.latitude > 20.0:
-                            nodes.append((19.8, 87.0, "Central Bay of Bengal Lane"))
+    while pq:
+        curr_dist, curr_node = heappop(pq)
 
-    elif orig_is_east and dest_is_west:
-        if origin.latitude > 16.0 and origin.id != 'CCU':
-            nodes.append((17.5, 84.5, "Offshore Visakhapatnam"))
-        if origin.latitude > 14.0 and origin.id not in ['IXZ', 'SIN']:
-            nodes.append((13.2, 81.5, "Coromandel Sea Lane"))
+        if curr_node == end_node:
+            break
 
-        if origin.id == 'TCR':
-            nodes.append((7.8, 77.8, "Gulf of Mannar Passage"))
-        elif origin.id == 'CMB':
-            pass
-        else:
-            if origin.latitude > 11.0 and origin.id not in ['IXZ', 'SIN']:
-                nodes.append((8.0, 82.0, "East Sri Lanka Offshore"))
-            nodes.append((5.5, 80.6, "South Sri Lanka (Dondra Head)"))
+        if curr_dist > distances[curr_node]:
+            continue
 
-        nodes.append((7.0, 76.8, "Off Cape Comorin (Kanyakumari Passage)"))
-        if dest.latitude > 10.0:
-            nodes.append((9.8, 75.2, "Lakshadweep Sea Corridor"))
-            if dest.latitude > 15.0 and dest.id not in ['DXB', 'MCT']:
-                nodes.append((15.0, 72.5, "Offshore Konkan"))
+        for neighbor, weight in graph[curr_node]:
+            distance = curr_dist + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous[neighbor] = curr_node
+                heappush(pq, (distance, neighbor))
 
-    # 3. Same-basin coastal transit
-    elif orig_is_west and dest_is_west:
-        if origin.id != dest.id:
-            mid_lat = (origin.latitude + dest.latitude) / 2.0
-            mid_lon = min(origin.longitude, dest.longitude) - 2.0
-            if mid_lat > 18.0 and mid_lon > 69.5:
-                mid_lon = 69.5
-            nodes.append((mid_lat, mid_lon, "Arabian Sea Offshore Corridor"))
+    # Reconstruct shortest ocean path
+    path_nodes: List[str] = []
+    curr: Optional[str] = end_node
+    while curr is not None:
+        path_nodes.append(curr)
+        curr = previous[curr]
+    path_nodes.reverse()
 
-    elif orig_is_east and dest_is_east:
-        if origin.id != dest.id:
-            mid_lat = (origin.latitude + dest.latitude) / 2.0
-            mid_lon = max(origin.longitude, dest.longitude) + 2.0
-            nodes.append((mid_lat, mid_lon, "Bay of Bengal Offshore Corridor"))
+    if not path_nodes or path_nodes[0] != start_node:
+        # Fallback to direct outer fairway line if no graph path exists
+        path_nodes = [start_node, end_node]
 
-    # 4. Specific destination entry waypoints
-    if dest.id == 'IXY':
-        nodes.append((22.3, 68.8, "Gulf of Kutch Outer Fairway"))
-    elif dest.id == 'DXB':
-        nodes.append((20.0, 65.0, "Central Arabian Sea Channel"))
-        nodes.append((24.0, 59.0, "Gulf of Oman Approach"))
-        nodes.append((25.6, 56.4, "Strait of Hormuz Chokepoint"))
-    elif dest.id == 'MCT':
-        nodes.append((20.0, 65.0, "Central Arabian Sea Channel"))
-        nodes.append((23.5, 60.0, "Gulf of Oman Approach"))
-    elif dest.id == 'CCU':
-        nodes.append((19.8, 87.0, "Offshore Odisha"))
-        nodes.append((21.2, 88.2, "Hooghly River Approach"))
-    elif dest.id == 'SIN':
-        nodes.append((6.0, 93.5, "Six Degree Channel (Great Nicobar)"))
-        nodes.append((5.2, 96.5, "Northern Malacca Strait Entrance"))
-        nodes.append((2.8, 101.2, "Malacca Strait Corridor"))
+    # Convert graph nodes to coordinate list
+    raw_coords: List[Tuple[float, float, str]] = []
+    raw_coords.append((origin_port.latitude, origin_port.longitude, f"Departure: {origin_port.name}"))
 
-    # Interpolate intermediate waypoints smoothly along nodes
-    points: List[tuple[float, float, str]] = []
-    nodes.append((dest.latitude, dest.longitude, f"Arrival: {dest.name}"))
+    for node_key in path_nodes:
+        lat, lon, name = OCEAN_NODES[node_key]
+        raw_coords.append((lat, lon, name))
 
-    for k in range(len(nodes) - 1):
-        n1 = nodes[k]
-        n2 = nodes[k + 1]
-        leg_dist = haversine_nm(n1[0], n1[1], n2[0], n2[1])
-        sub_steps = max(2, int(leg_dist / 110.0))
+    raw_coords.append((dest_port.latitude, dest_port.longitude, f"Arrival: {dest_port.name}"))
+
+    # Interpolate smooth intermediate water waypoints every ~60 NM along the sea legs
+    smooth_waypoints: List[Tuple[float, float, str]] = []
+    for k in range(len(raw_coords) - 1):
+        p1 = raw_coords[k]
+        p2 = raw_coords[k + 1]
+        leg_dist = haversine_nm(p1[0], p1[1], p2[0], p2[1])
+        sub_steps = max(1, int(leg_dist / 60.0))
 
         for s in range(sub_steps):
             frac = s / float(sub_steps)
-            lat = n1[0] + (n2[0] - n1[0]) * frac
-            lon = n1[1] + (n2[1] - n1[1]) * frac
-            name = n1[2] if s == 0 else f"Leg {k+1}.{s} ({round(lat,2)}°N, {round(lon,2)}°E)"
-            points.append((lat, lon, name))
+            lat = p1[0] + (p2[0] - p1[0]) * frac
+            lon = p1[1] + (p2[1] - p1[1]) * frac
+            wpt_name = p1[2] if s == 0 else f"Leg {k+1}.{s} ({round(lat,2)}°N, {round(lon,2)}°E)"
+            smooth_waypoints.append((round(lat, 4), round(lon, 4), wpt_name))
 
-    points.append((dest.latitude, dest.longitude, f"Arrival: {dest.name}"))
-    return points
+    smooth_waypoints.append((dest_port.latitude, dest_port.longitude, f"Arrival: {dest_port.name}"))
+    return smooth_waypoints
 
 
 # ── Core Smart Routing Algorithm Engine ────────────────────────────────────────
@@ -281,8 +385,8 @@ def compute_smart_route(req: RoutingRequestSchema) -> ShipRouteResultSchema:
     vessel = next((v for v in VESSELS if v.id == req.vessel_id), VESSELS[0])
     vessel_speed = req.custom_speed_knots if req.custom_speed_knots and req.custom_speed_knots > 0 else vessel.default_speed_knots
 
-    # Get marine sea-lane nodes avoiding land
-    sea_lane_points = get_maritime_corridor(origin, dest)
+    # Get 100% water-only maritime sea-lane waypoints via Dijkstra pathfinding
+    sea_lane_points = find_water_only_path(origin, dest)
 
     direct_dist_nm = haversine_nm(origin.latitude, origin.longitude, dest.latitude, dest.longitude)
 
@@ -333,7 +437,7 @@ def compute_smart_route(req: RoutingRequestSchema) -> ShipRouteResultSchema:
 
         if i == 0:
             leg_dist = 0.0
-            heading = calculate_bearing(origin.latitude, origin.longitude, sea_lane_points[1][0], sea_lane_points[1][1])
+            heading = calculate_bearing(origin.latitude, origin.longitude, sea_lane_points[1][0], sea_lane_points[1][1]) if len(sea_lane_points) > 1 else 0.0
         else:
             prev = smart_waypoints[-1]
             leg_dist = haversine_nm(prev.latitude, prev.longitude, lat, lon)

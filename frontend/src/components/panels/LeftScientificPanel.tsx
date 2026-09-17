@@ -60,7 +60,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
     <aside className="w-[320px] shrink-0 h-[calc(100vh-70px-44px)] overflow-y-auto pr-1 space-y-3.5 scrollbar-thin select-none">
       
       {/* 1. SCIENTIFIC LAYER CONTROL CARD */}
-      <div className="bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-700/90 shadow-sm p-4 text-slate-800 dark:text-slate-200 transition-all">
+      <div id="layers-section" className="bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-700/90 shadow-sm p-4 text-slate-800 dark:text-slate-200 transition-all">
         <div
           onClick={() => setLayersOpen(!layersOpen)}
           className="flex items-center justify-between cursor-pointer border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3"

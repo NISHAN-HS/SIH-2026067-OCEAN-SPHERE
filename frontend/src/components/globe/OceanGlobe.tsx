@@ -97,6 +97,55 @@ export const OceanGlobe: React.FC<OceanGlobeProps> = ({
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.clip();
 
+      // Landmass Continents (Satellite Topography Colors)
+      const projectPoint = (lat: number, lon: number) => {
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lon + angle) * (Math.PI / 180);
+        const x = centerX + radius * Math.sin(phi) * Math.sin(theta);
+        const y = centerY - radius * Math.cos(phi);
+        const visible = Math.cos(theta) > 0;
+        return { x, y, visible };
+      };
+
+      const drawContinent = (pathPoints: [number, number][], fillColor: string) => {
+        ctx.fillStyle = fillColor;
+        ctx.beginPath();
+        let started = false;
+        pathPoints.forEach(([lat, lon]) => {
+          const pt = projectPoint(lat, lon);
+          if (pt.visible) {
+            if (!started) {
+              ctx.moveTo(pt.x, pt.y);
+              started = true;
+            } else {
+              ctx.lineTo(pt.x, pt.y);
+            }
+          }
+        });
+        if (started) {
+          ctx.closePath();
+          ctx.fill();
+        }
+      };
+
+      // Eurasia & India Peninsula
+      drawContinent([
+        [35, 68], [30, 70], [23, 68], [18, 73], [15, 74], [8, 77], [10, 80],
+        [16, 82], [21, 89], [23, 92], [28, 97], [35, 105], [45, 120], [60, 100],
+        [50, 45], [35, 50]
+      ], 'rgba(45, 74, 62, 0.85)');
+
+      // Africa
+      drawContinent([
+        [35, -10], [30, 32], [12, 43], [10, 51], [-12, 40], [-34, 20],
+        [-15, 12], [5, 9], [15, -17]
+      ], 'rgba(55, 80, 55, 0.85)');
+
+      // Australia
+      drawContinent([
+        [-12, 130], [-15, 142], [-25, 153], [-38, 145], [-32, 115], [-20, 114]
+      ], 'rgba(70, 90, 60, 0.85)');
+
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
       ctx.lineWidth = 1;
 

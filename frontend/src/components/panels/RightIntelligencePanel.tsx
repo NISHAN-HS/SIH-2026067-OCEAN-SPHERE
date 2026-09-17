@@ -121,11 +121,34 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
   ];
 
   const getReliabilityStyle = (score: number) => {
-    if (score >= 80) return { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badgeBg: 'bg-emerald-500', label: 'High Reliability' };
-    if (score >= 60) return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badgeBg: 'bg-amber-500', label: 'Moderate Reliability' };
-    return { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', badgeBg: 'bg-rose-500', label: 'Low Reliability' };
+    if (score >= 80) return { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/60', text: 'text-emerald-700 dark:text-emerald-400', badgeBg: 'bg-emerald-500', label: 'High Reliability' };
+    if (score >= 60) return { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/60', text: 'text-amber-700 dark:text-amber-400', badgeBg: 'bg-amber-500', label: 'Moderate Reliability' };
+    return { bg: 'bg-rose-50 dark:bg-rose-950/30', border: 'border-rose-200 dark:border-rose-800/60', text: 'text-rose-700 dark:text-rose-400', badgeBg: 'bg-rose-500', label: 'Low Reliability' };
   };
+
+  const getDynamicConfidence = (score: number) => {
+    if (score >= 85) return { confidence: 'High Confidence', color: 'text-emerald-600 dark:text-emerald-400 font-bold' };
+    if (score >= 70) return { confidence: 'Medium Confidence', color: 'text-amber-600 dark:text-amber-400 font-bold' };
+    return { confidence: 'Low Confidence (Uncertain)', color: 'text-rose-600 dark:text-rose-400 font-bold' };
+  };
+
+  const getDynamicRisk = (score: number) => {
+    if (score >= 85) return { risk: 'Low Operational Risk', color: 'text-emerald-600 dark:text-emerald-400 font-bold' };
+    if (score >= 70) return { risk: 'Moderate Operational Risk', color: 'text-amber-600 dark:text-amber-400 font-bold' };
+    return { risk: 'High Operational Risk (Severe)', color: 'text-rose-600 dark:text-rose-400 font-bold' };
+  };
+
+  const getDynamicDivergence = (score: number) => {
+    const mae = Number(((100 - score) * 0.022 + 0.08).toFixed(2));
+    if (mae < 0.25) return { label: `MAE ${mae} °C (Low)`, color: 'text-emerald-600 dark:text-emerald-400 font-mono font-bold' };
+    if (mae < 0.55) return { label: `MAE ${mae} °C (Moderate)`, color: 'text-amber-600 dark:text-amber-400 font-mono font-bold' };
+    return { label: `MAE ${mae} °C (High Divergence)`, color: 'text-rose-600 dark:text-rose-400 font-mono font-bold' };
+  };
+
   const relStyle = getReliabilityStyle(selectedLocation.reliabilityScore);
+  const confData = getDynamicConfidence(selectedLocation.reliabilityScore);
+  const riskData = getDynamicRisk(selectedLocation.reliabilityScore);
+  const divData = getDynamicDivergence(selectedLocation.reliabilityScore);
 
   return (
     <aside className="w-[350px] shrink-0 h-[calc(100vh-70px-44px)] overflow-y-auto pl-1 space-y-3.5 scrollbar-thin select-none">
@@ -235,15 +258,15 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
         <div className="space-y-1.5 text-xs border-t border-slate-200 dark:border-slate-700/60 pt-2.5">
           <div className="flex justify-between">
             <span className="text-slate-600 dark:text-slate-400">Confidence Level:</span>
-            <span className="font-bold text-slate-900 dark:text-slate-100">{selectedLocation.confidenceLevel}</span>
+            <span className={confData.color}>{confData.confidence}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-600 dark:text-slate-400">Risk Assessment:</span>
-            <span className="font-bold text-slate-900 dark:text-slate-100">{selectedLocation.riskLevel}</span>
+            <span className={riskData.color}>{riskData.risk}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-600 dark:text-slate-400">Model Divergence:</span>
-            <span className="font-mono text-slate-700 dark:text-slate-300">MAE 0.14 °C (Low)</span>
+            <span className={divData.color}>{divData.label}</span>
           </div>
         </div>
       </div>
