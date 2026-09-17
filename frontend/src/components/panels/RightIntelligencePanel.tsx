@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import {
   MapPin,
   Copy,
@@ -67,6 +68,7 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
   onSelectAlert,
   onDismissAlert,
 }) => {
+  const { formatTemp, convertTemp, tempSymbol, tempUnit } = useTheme();
   const [copied, setCopied] = useState(false);
   const [activeInsightTab, setActiveInsightTab] = useState<'temp' | 'current' | 'reliability'>('temp');
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('ALL');
@@ -98,26 +100,27 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
   const handleDismiss = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     setMutedAlerts(prev => new Set([...prev, id]));
-    onDismissAlert?.(id);
+    if (onDismissAlert) onDismissAlert(id);
   };
 
-  // Filter
-  const visibleAlerts = alerts
-    .filter(a => !mutedAlerts.has(a.id))
-    .filter(a => severityFilter === 'ALL' || a.severity === severityFilter);
+  const visibleAlerts = alerts.filter(a => {
+    if (mutedAlerts.has(a.id)) return false;
+    if (severityFilter === 'ALL') return true;
+    return a.severity === severityFilter;
+  });
 
   const critCount = alerts.filter(a => a.severity === 'CRITICAL' && !mutedAlerts.has(a.id)).length;
   const warnCount = alerts.filter(a => a.severity === 'WARNING' && !mutedAlerts.has(a.id)).length;
 
   // Depth trend data
   const depthTrendData = [
-    { depth: 0, temp: selectedLocation.temperature, velocity: selectedLocation.currentSpeed, reliability: selectedLocation.reliabilityScore },
-    { depth: 50, temp: selectedLocation.temperature - 1.2, velocity: selectedLocation.currentSpeed * 0.85, reliability: selectedLocation.reliabilityScore - 1 },
-    { depth: 100, temp: selectedLocation.temperature - 3.4, velocity: selectedLocation.currentSpeed * 0.65, reliability: selectedLocation.reliabilityScore - 2 },
-    { depth: 500, temp: selectedLocation.temperature - 12.1, velocity: selectedLocation.currentSpeed * 0.3, reliability: selectedLocation.reliabilityScore - 3 },
-    { depth: 1000, temp: 8.4, velocity: 0.12, reliability: selectedLocation.reliabilityScore - 1 },
-    { depth: 2000, temp: 4.1, velocity: 0.05, reliability: selectedLocation.reliabilityScore },
-    { depth: 3000, temp: 2.3, velocity: 0.02, reliability: selectedLocation.reliabilityScore + 1 },
+    { depth: 0, temp: Number(convertTemp(selectedLocation.temperature).toFixed(1)), velocity: selectedLocation.currentSpeed, reliability: selectedLocation.reliabilityScore },
+    { depth: 50, temp: Number(convertTemp(selectedLocation.temperature - 1.2).toFixed(1)), velocity: selectedLocation.currentSpeed * 0.85, reliability: selectedLocation.reliabilityScore - 1 },
+    { depth: 100, temp: Number(convertTemp(selectedLocation.temperature - 3.4).toFixed(1)), velocity: selectedLocation.currentSpeed * 0.65, reliability: selectedLocation.reliabilityScore - 2 },
+    { depth: 500, temp: Number(convertTemp(selectedLocation.temperature - 12.1).toFixed(1)), velocity: selectedLocation.currentSpeed * 0.3, reliability: selectedLocation.reliabilityScore - 3 },
+    { depth: 1000, temp: Number(convertTemp(8.4).toFixed(1)), velocity: 0.12, reliability: selectedLocation.reliabilityScore - 1 },
+    { depth: 2000, temp: Number(convertTemp(4.1).toFixed(1)), velocity: 0.05, reliability: selectedLocation.reliabilityScore },
+    { depth: 3000, temp: Number(convertTemp(2.3).toFixed(1)), velocity: 0.02, reliability: selectedLocation.reliabilityScore + 1 },
   ];
 
   const getReliabilityStyle = (score: number) => {
@@ -139,10 +142,11 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
   };
 
   const getDynamicDivergence = (score: number) => {
-    const mae = Number(((100 - score) * 0.022 + 0.08).toFixed(2));
-    if (mae < 0.25) return { label: `MAE ${mae} °C (Low)`, color: 'text-emerald-600 dark:text-emerald-400 font-mono font-bold' };
-    if (mae < 0.55) return { label: `MAE ${mae} °C (Moderate)`, color: 'text-amber-600 dark:text-amber-400 font-mono font-bold' };
-    return { label: `MAE ${mae} °C (High Divergence)`, color: 'text-rose-600 dark:text-rose-400 font-mono font-bold' };
+    const rawMae = Number(((100 - score) * 0.022 + 0.08).toFixed(2));
+    const displayMae = tempUnit === 'F' ? Number((rawMae * 1.8).toFixed(2)) : rawMae;
+    if (rawMae < 0.25) return { label: `MAE ${displayMae} ${tempSymbol} (Low)`, color: 'text-emerald-600 dark:text-emerald-400 font-mono font-bold' };
+    if (rawMae < 0.55) return { label: `MAE ${displayMae} ${tempSymbol} (Moderate)`, color: 'text-amber-600 dark:text-amber-400 font-mono font-bold' };
+    return { label: `MAE ${displayMae} ${tempSymbol} (High Divergence)`, color: 'text-rose-600 dark:text-rose-400 font-mono font-bold' };
   };
 
   const relStyle = getReliabilityStyle(selectedLocation.reliabilityScore);
@@ -215,7 +219,7 @@ export const RightIntelligencePanel: React.FC<RightIntelligencePanelProps> = ({
         </div>
         <div className="space-y-2.5 text-xs">
           {[
-            { icon: Thermometer, color: 'text-rose-500', label: 'Temperature', val: `${selectedLocation.temperature.toFixed(1)} °C` },
+            { icon: Thermometer, color: 'text-rose-500', label: 'Temperature', val: formatTemp(selectedLocation.temperature) },
             { icon: Droplets, color: 'text-cyan-500', label: 'Salinity', val: `${selectedLocation.salinity.toFixed(1)} PSU` },
             { icon: Waves, color: 'text-sky-500', label: 'Wave Height', val: `${selectedLocation.waveHeight.toFixed(1)} m` },
             { icon: Wind, color: 'text-indigo-500', label: 'Current Speed', val: `${selectedLocation.currentSpeed.toFixed(2)} m/s (${selectedLocation.currentDirection}°)` },

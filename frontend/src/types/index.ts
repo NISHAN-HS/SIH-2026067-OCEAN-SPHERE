@@ -93,7 +93,7 @@ export interface ObservationData {
 export interface ReliabilityScore {
   id: number;
   region_id: string;
-  observation_id: string;
+  observation_id?: string;
   timestamp: string;
   latitude: number;
   longitude: number;

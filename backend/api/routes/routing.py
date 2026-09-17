@@ -420,15 +420,31 @@ def compute_smart_route(req: RoutingRequestSchema) -> ShipRouteResultSchema:
         risk = "Low Risk"
         advisory = "Favorable ocean sea-lane passage."
 
-        if req.optimization_mode == "reliability":
-            if reliability < 72.0 or wave_height > 2.8:
-                hazard_zones_bypassed += 1
-                reliability = min(98.5, reliability + 18.0)
-                wave_height = max(1.1, wave_height - 1.2)
-                advisory = "Course speed adjusted to bypass high wave/low reliability zone."
-        elif req.optimization_mode == "eco":
+        # Active Hazard Avoidance Filters
+        if req.avoid_high_waves and wave_height > 2.6 and i > 0 and i < steps_count:
+            hazard_zones_bypassed += 1
+            lat += 0.35 if (i % 2 == 0) else -0.25
+            lon += 0.30 if (i % 2 == 1) else 0.20
+            wave_height = round(wave_height * 0.52, 2)
+            advisory = "Offshore course diversion active: bypassed high wave field (> 2.8m)."
+
+        if req.avoid_low_reliability and reliability < 75.0 and i > 0 and i < steps_count:
+            hazard_zones_bypassed += 1
+            lat -= 0.20 if (i % 2 == 0) else 0.25
+            reliability = round(min(98.5, reliability + 22.0), 1)
+            advisory = "Rerouted through high-precision Argo-calibrated forecast corridor (reliability > 90%)."
+
+        if req.avoid_active_alerts and (i == max(1, int(len(sea_lane_points) / 2)) or wave_height > 2.9) and i > 0 and i < steps_count:
+            hazard_zones_bypassed += 1
+            lat += 0.45
+            lon += 0.40
+            wave_height = round(max(1.1, wave_height - 1.4), 2)
+            reliability = round(min(99.0, reliability + 15.0), 1)
+            advisory = "Tactical diversion executed around active severe maritime alert zone."
+
+        if req.optimization_mode == "eco":
             if math.cos(math.radians(current_dir - 45.0)) > 0.3:
-                advisory = "Route aligned with ocean current tailwind (+1.2 kts SOG)."
+                advisory += " Route aligned with ocean current tailwind (+1.2 kts SOG)."
 
         if wave_height > 3.2:
             risk = "Critical Hazard"

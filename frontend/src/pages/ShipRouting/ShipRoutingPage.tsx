@@ -688,6 +688,8 @@ export const ShipRoutingPage: React.FC = () => {
                 mapDest={mapDest}
                 simStep={simStep}
                 showDirectRoute={showDirectRoute}
+                showWavesOverlay={showWavesOverlay}
+                showReliabilityOverlay={showReliabilityOverlay}
                 selectedWaypoint={selectedWaypoint}
                 setSelectedWaypoint={setSelectedWaypoint}
               />

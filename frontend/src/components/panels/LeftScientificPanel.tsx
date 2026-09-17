@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../../hooks/useTheme';
 import {
   Layers,
   ChevronDown,
@@ -42,6 +43,7 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
   onTogglePlayback,
   onChangeDate,
 }) => {
+  const { formatTemp } = useTheme();
   const [layersOpen, setLayersOpen] = useState(true);
   const [depthOpen, setDepthOpen] = useState(true);
   const [timeOpen, setTimeOpen] = useState(true);
@@ -115,9 +117,9 @@ export const LeftScientificPanel: React.FC<LeftScientificPanelProps> = ({
                 {layers.temperature ? <Eye className="w-3.5 h-3.5 text-ocean-600" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
               </div>
               <div className="flex items-center gap-2 pt-0.5 pl-6">
-                <span className="text-[10px] text-slate-400 font-mono">10°C</span>
+                <span className="text-[10px] text-slate-400 font-mono">{formatTemp(10, 0)}</span>
                 <div className="flex-1 h-2 rounded-full bg-gradient-to-r from-blue-600 via-teal-400 via-yellow-400 to-rose-600 shadow-inner"></div>
-                <span className="text-[10px] text-slate-400 font-mono">34°C</span>
+                <span className="text-[10px] text-slate-400 font-mono">{formatTemp(34, 0)}</span>
               </div>
             </div>
 

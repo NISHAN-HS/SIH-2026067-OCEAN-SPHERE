@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { X, TrendingUp, MapPin, Thermometer, Droplets, Wind, Waves, ShieldCheck, Activity, Download } from 'lucide-react';
 import { SelectedLocationData } from '../../types';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from 'recharts';
+import { useTheme } from '../../hooks/useTheme';
 
 interface LocationProfileModalProps {
   isOpen: boolean;
@@ -15,17 +16,19 @@ export const LocationProfileModal: React.FC<LocationProfileModalProps> = ({
   onClose,
   location
 }) => {
+  const { formatTemp, convertTemp, tempSymbol } = useTheme();
+
   if (!isOpen) return null;
 
   const depthProfileData = [
-    { depth: 0, temp: location.temperature, salinity: location.salinity, speed: location.currentSpeed },
-    { depth: 50, temp: location.temperature - 1.1, salinity: location.salinity + 0.1, speed: location.currentSpeed * 0.85 },
-    { depth: 100, temp: location.temperature - 3.2, salinity: location.salinity + 0.3, speed: location.currentSpeed * 0.65 },
-    { depth: 200, temp: location.temperature - 8.5, salinity: location.salinity + 0.4, speed: location.currentSpeed * 0.45 },
-    { depth: 500, temp: 12.4, salinity: 35.1, speed: 0.18 },
-    { depth: 1000, temp: 7.8, salinity: 34.8, speed: 0.09 },
-    { depth: 2000, temp: 3.9, salinity: 34.7, speed: 0.04 },
-    { depth: 3200, temp: 2.1, salinity: 34.6, speed: 0.02 }
+    { depth: 0, temp: Number(convertTemp(location.temperature).toFixed(1)), salinity: location.salinity, speed: location.currentSpeed },
+    { depth: 50, temp: Number(convertTemp(location.temperature - 1.1).toFixed(1)), salinity: location.salinity + 0.1, speed: location.currentSpeed * 0.85 },
+    { depth: 100, temp: Number(convertTemp(location.temperature - 3.2).toFixed(1)), salinity: location.salinity + 0.3, speed: location.currentSpeed * 0.65 },
+    { depth: 200, temp: Number(convertTemp(location.temperature - 8.5).toFixed(1)), salinity: location.salinity + 0.4, speed: location.currentSpeed * 0.45 },
+    { depth: 500, temp: Number(convertTemp(12.4).toFixed(1)), salinity: 35.1, speed: 0.18 },
+    { depth: 1000, temp: Number(convertTemp(7.8).toFixed(1)), salinity: 34.8, speed: 0.09 },
+    { depth: 2000, temp: Number(convertTemp(3.9).toFixed(1)), salinity: 34.7, speed: 0.04 },
+    { depth: 3200, temp: Number(convertTemp(2.1).toFixed(1)), salinity: 34.6, speed: 0.02 }
   ];
 
   return createPortal(
@@ -71,7 +74,7 @@ export const LocationProfileModal: React.FC<LocationProfileModalProps> = ({
           </div>
           <div>
             <span className="text-slate-500 dark:text-slate-400 block font-semibold">Surface Temp</span>
-            <span className="font-extrabold text-rose-500 text-sm">{location.temperature} °C</span>
+            <span className="font-extrabold text-rose-500 text-sm">{formatTemp(location.temperature)}</span>
           </div>
           <div>
             <span className="text-slate-500 dark:text-slate-400 block font-semibold">Salinity</span>
@@ -87,7 +90,7 @@ export const LocationProfileModal: React.FC<LocationProfileModalProps> = ({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
               <span className="font-bold text-xs uppercase tracking-wider text-rose-500 flex items-center gap-1.5">
                 <Thermometer className="w-4 h-4" />
-                Temperature vs Depth (°C)
+                Temperature vs Depth ({tempSymbol})
               </span>
             </div>
             <div className="h-52 w-full">
@@ -102,7 +105,7 @@ export const LocationProfileModal: React.FC<LocationProfileModalProps> = ({
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="depth" stroke="#94a3b8" fontSize={10} tickFormatter={(v) => `${v}m`} />
                   <YAxis stroke="#94a3b8" fontSize={10} domain={['auto', 'auto']} />
-                  <Tooltip formatter={(val: any) => [`${Number(val).toFixed(1)} °C`, 'Temperature']} />
+                  <Tooltip formatter={(val: any) => [`${Number(val).toFixed(1)} ${tempSymbol}`, 'Temperature']} />
                   <Area type="monotone" dataKey="temp" stroke="#f43f5e" strokeWidth={2.5} fillOpacity={1} fill="url(#profileTempGrad)" />
                 </AreaChart>
               </ResponsiveContainer>

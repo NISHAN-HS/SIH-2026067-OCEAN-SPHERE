@@ -1,4 +1,5 @@
 import os
+import math
 import joblib
 import pandas as pd
 
@@ -43,6 +44,7 @@ def predict_reliability_score(
     sal_bias = abs(forecast_sal - obs_sal)
     current_bias = abs(forecast_spd - obs_spd)
 
+    raw_score = None
     if model is not None:
         input_df = pd.DataFrame([{
             "temp_bias": temp_bias,
@@ -56,21 +58,24 @@ def predict_reliability_score(
             "speed_obs": obs_spd
         }])
 
-        if scaler is not None:
-            try:
+        try:
+            if scaler is not None:
                 input_scaled = scaler.transform(input_df)
-                score = float(model.predict(input_scaled)[0])
-            except Exception:
-                score = float(model.predict(input_df)[0])
-        else:
-            score = float(model.predict(input_df)[0])
-    else:
-        # Mathematical backup heuristic
-        base = 100.0
-        penalty = (temp_bias * 20.0) + (sal_bias * 15.0) + (current_bias * 25.0)
-        score = max(0.0, min(100.0, base - penalty))
+                raw_score = float(model.predict(input_scaled)[0])
+            else:
+                raw_score = float(model.predict(input_df)[0])
+        except Exception:
+            raw_score = None
 
-    score = round(score, 2)
+    if raw_score is None or math.isnan(raw_score):
+        raw_score = 100.0 - (temp_bias * 5.0 + sal_bias * 3.0 + current_bias * 15.0)
+
+    # Smooth asymptotic score floor (prevents unhelpful 0% for large input biases)
+    if raw_score <= 15.0:
+        decay = math.exp(-(temp_bias * 0.12 + sal_bias * 0.05 + current_bias * 0.25))
+        score = max(15.0, round(50.0 * decay, 1))
+    else:
+        score = round(min(99.4, raw_score), 1)
 
     if score >= 80.0:
         cat = "High Reliability"

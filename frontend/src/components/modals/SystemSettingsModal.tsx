@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Settings, RefreshCw, Sun, Moon, Database, Cpu, Layers, Sliders, Check, ShieldCheck } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
 
 interface SystemSettingsModalProps {
   isOpen: boolean;
@@ -15,8 +16,8 @@ export const SystemSettingsModal: React.FC<SystemSettingsModalProps> = ({
   isDarkMode,
   onToggleTheme
 }) => {
+  const { tempUnit, setTempUnit } = useTheme();
   const [refreshInterval, setRefreshInterval] = useState<'15s' | '30s' | '60s'>('30s');
-  const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
   const [autoSync, setAutoSync] = useState(true);
   const [highResTerrain, setHighResTerrain] = useState(true);
   const [savedSuccess, setSavedSuccess] = useState(false);

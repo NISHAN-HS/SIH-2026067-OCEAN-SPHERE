@@ -6,6 +6,7 @@ import {
   ShieldCheck, AlertTriangle, Globe, BarChart3, Filter, RefreshCw,
   Eye, Printer, Calendar, ChevronDown, ChevronUp, Award, Cpu
 } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
 
 type ReportType = 'executive' | 'reliability' | 'alerts' | 'forecast' | 'full';
 type ExportFormat = 'pdf' | 'csv' | 'json' | 'txt';
@@ -19,6 +20,7 @@ interface DownloadState {
 const REGIONS = ['All Regions', 'IND_WEST', 'IND_EAST', 'IND_SOUTH', 'IND_ANDAMAN', 'IND_GUJARAT', 'IND_TAMILNADU'];
 
 export const ReportsPage: React.FC = () => {
+  const { formatTemp } = useTheme();
   const [reliability, setReliability] = useState<ReliabilityScore[]>([]);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [regions, setRegions] = useState<Region[]>([]);
@@ -535,8 +537,8 @@ export const ReportsPage: React.FC = () => {
                       </td>
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{r.confidence_level}</td>
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{r.risk_level}</td>
-                      <td className="px-3 py-2 font-mono text-slate-800 dark:text-slate-200">{r.forecast_temperature?.toFixed(2)}°C</td>
-                      <td className="px-3 py-2 font-mono text-slate-800 dark:text-slate-200">{r.observed_temperature?.toFixed(2)}°C</td>
+                      <td className="px-3 py-2 font-mono text-slate-800 dark:text-slate-200">{formatTemp(r.forecast_temperature)}</td>
+                      <td className="px-3 py-2 font-mono text-slate-800 dark:text-slate-200">{formatTemp(r.observed_temperature)}</td>
                       <td className="px-3 py-2 font-mono text-slate-600 dark:text-slate-400">{r.temperature_bias?.toFixed(3)}</td>
                       <td className="px-3 py-2 text-slate-400 font-mono whitespace-nowrap">
                         {r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '—'}

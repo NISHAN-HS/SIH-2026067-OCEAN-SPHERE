@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { X, Scale, MapPin, ShieldCheck, Thermometer, Droplets, Wind, Waves, ArrowRightLeft } from 'lucide-react';
 import { Region } from '../../types';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
+import { useTheme } from '../../hooks/useTheme';
 
 interface RegionCompareModalProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
   onClose,
   regions
 }) => {
+  const { formatTemp, convertTemp, tempSymbol, tempUnit } = useTheme();
+
   if (!isOpen) return null;
 
   const [regionA, setRegionA] = useState<string>(regions[0]?.region_id || 'IND_WEST');
@@ -128,7 +131,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
   const comparisonData = [
     { metric: 'Reliability (%)', RegionA: statsA.reliability, RegionB: statsB.reliability },
     { metric: 'Accuracy (%)', RegionA: statsA.accuracy, RegionB: statsB.accuracy },
-    { metric: 'SST (°C)', RegionA: statsA.sst, RegionB: statsB.sst },
+    { metric: `SST (${tempSymbol})`, RegionA: Number(convertTemp(statsA.sst).toFixed(1)), RegionB: Number(convertTemp(statsB.sst).toFixed(1)) },
     { metric: 'Salinity (PSU)', RegionA: statsA.salinity, RegionB: statsB.salinity },
     { metric: 'Current Speed (x10 m/s)', RegionA: Number((statsA.currentSpeed * 10).toFixed(1)), RegionB: Number((statsB.currentSpeed * 10).toFixed(1)) }
   ];
@@ -201,7 +204,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             </div>
             <div className="flex justify-between py-1 border-b border-emerald-200/50">
               <span className="text-slate-600 dark:text-slate-400">Mean Temp MAE</span>
-              <span className="font-mono font-bold">{statsA.tempMae} °C</span>
+              <span className="font-mono font-bold">{(statsA.tempMae * (tempUnit === 'F' ? 1.8 : 1)).toFixed(2)} {tempSymbol}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-emerald-200/50">
               <span className="text-slate-600 dark:text-slate-400">Salinity Bias</span>
@@ -223,7 +226,7 @@ export const RegionCompareModal: React.FC<RegionCompareModalProps> = ({
             </div>
             <div className="flex justify-between py-1 border-b border-amber-200/50">
               <span className="text-slate-600 dark:text-slate-400">Mean Temp MAE</span>
-              <span className="font-mono font-bold">{statsB.tempMae} °C</span>
+              <span className="font-mono font-bold">{(statsB.tempMae * (tempUnit === 'F' ? 1.8 : 1)).toFixed(2)} {tempSymbol}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-amber-200/50">
               <span className="text-slate-600 dark:text-slate-400">Salinity Bias</span>

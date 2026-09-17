@@ -2,8 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { getRegions, getReliability } from '../../services/api';
 import { Region, ReliabilityScore } from '../../types';
 import { MapPin, Globe, ShieldCheck, Thermometer, Droplets, Wind, AlertTriangle } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
 
 export const RegionsPage: React.FC = () => {
+  const { formatTemp, tempSymbol, tempUnit } = useTheme();
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedReg, setSelectedReg] = useState<Region | null>(null);
 
@@ -107,7 +109,7 @@ export const RegionsPage: React.FC = () => {
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80">
                 <span className="text-slate-500 dark:text-slate-400 block">SST Mean</span>
-                <span className="font-bold text-slate-900 dark:text-white font-mono">{stats.sstMean} °C</span>
+                <span className="font-bold text-slate-900 dark:text-white font-mono">{formatTemp(stats.sstMean)}</span>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80">
                 <span className="text-slate-500 dark:text-slate-400 block">Salinity Mean</span>
@@ -118,7 +120,7 @@ export const RegionsPage: React.FC = () => {
             <div className="p-4 rounded-xl bg-ocean-50 dark:bg-slate-800/80 border border-ocean-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs leading-relaxed space-y-2">
               <span className="font-bold text-ocean-900 dark:text-ocean-300 block">Regional Scientific Summary:</span>
               <p>
-                The {selectedReg.name} region ({selectedReg.lat_min}°N - {selectedReg.lat_max}°N, {selectedReg.lon_min}°E - {selectedReg.lon_max}°E) demonstrates a mean SST of <strong>{stats.sstMean} °C</strong> and salinity profile of <strong>{stats.salinityMean} PSU</strong>. Ocean current speed averages <strong>{stats.currentSpeed} m/s</strong> with a model forecast reliability score of <strong>{stats.relScore}%</strong> across Argo float & satellite observation matchpoints.
+                The {selectedReg.name} region ({selectedReg.lat_min}°N - {selectedReg.lat_max}°N, {selectedReg.lon_min}°E - {selectedReg.lon_max}°E) demonstrates a mean SST of <strong>{formatTemp(stats.sstMean)}</strong> and salinity profile of <strong>{stats.salinityMean} PSU</strong>. Ocean current speed averages <strong>{stats.currentSpeed} m/s</strong> with a model forecast reliability score of <strong>{stats.relScore}%</strong> across Argo float & satellite observation matchpoints.
               </p>
             </div>
           </div>
@@ -133,7 +135,7 @@ export const RegionsPage: React.FC = () => {
               </div>
               <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500 dark:text-slate-400">Thermal Divergence</span>
-                <span className="font-bold text-emerald-600">{stats.thermalDivergence} °C (Normal)</span>
+                <span className="font-bold text-emerald-600">{(stats.thermalDivergence * (tempUnit === 'F' ? 1.8 : 1)).toFixed(2)} {tempSymbol} (Normal)</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500 dark:text-slate-400">Salinity Anomaly</span>

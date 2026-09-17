@@ -5,7 +5,13 @@ import { Cpu, Award, Zap, Play, CheckCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 export const ModelAnalyticsPage: React.FC = () => {
-  // Live Prediction Form Inputs
+  const REGION_PRESETS: Record<string, { lat: number; lon: number; forecast_temp: number; obs_temp: number; forecast_sal: number; obs_sal: number; forecast_spd: number; obs_spd: number }> = {
+    IND_WEST: { lat: 15.5, lon: 72.5, forecast_temp: 28.5, obs_temp: 28.2, forecast_sal: 35.1, obs_sal: 35.0, forecast_spd: 0.40, obs_spd: 0.38 },
+    IND_EAST: { lat: 17.5, lon: 84.5, forecast_temp: 28.8, obs_temp: 28.4, forecast_sal: 34.2, obs_sal: 34.0, forecast_spd: 0.50, obs_spd: 0.46 },
+    IND_SOUTH: { lat: 6.5, lon: 78.0, forecast_temp: 27.2, obs_temp: 27.0, forecast_sal: 35.4, obs_sal: 35.2, forecast_spd: 0.35, obs_spd: 0.32 },
+    IND_GUJARAT: { lat: 21.5, lon: 69.5, forecast_temp: 26.5, obs_temp: 26.1, forecast_sal: 36.2, obs_sal: 35.9, forecast_spd: 0.60, obs_spd: 0.54 }
+  };
+
   const [form, setForm] = useState({
     region_id: 'IND_WEST',
     latitude: 15.5,
@@ -14,9 +20,24 @@ export const ModelAnalyticsPage: React.FC = () => {
     observed_temperature: 28.2,
     forecast_salinity: 35.1,
     observed_salinity: 35.0,
-    forecast_current_speed: 0.20,
-    observed_current_speed: 0.18
+    forecast_current_speed: 0.40,
+    observed_current_speed: 0.38
   });
+
+  const handleRegionChange = (newRegionId: string) => {
+    const preset = REGION_PRESETS[newRegionId] || REGION_PRESETS['IND_WEST'];
+    setForm({
+      region_id: newRegionId,
+      latitude: preset.lat,
+      longitude: preset.lon,
+      forecast_temperature: preset.forecast_temp,
+      observed_temperature: preset.obs_temp,
+      forecast_salinity: preset.forecast_sal,
+      observed_salinity: preset.obs_sal,
+      forecast_current_speed: preset.forecast_spd,
+      observed_current_speed: preset.obs_spd
+    });
+  };
 
   const [predResult, setPredResult] = useState<PredictResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -90,7 +111,7 @@ export const ModelAnalyticsPage: React.FC = () => {
             <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Region ID</label>
             <select
               value={form.region_id}
-              onChange={e => setForm({ ...form, region_id: e.target.value })}
+              onChange={e => handleRegionChange(e.target.value)}
               className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             >
               <option value="IND_WEST">West Coast of India (Arabian Sea)</option>

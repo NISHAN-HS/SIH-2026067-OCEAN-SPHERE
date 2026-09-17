@@ -39,6 +39,8 @@ interface RouteMapProps {
   mapDest: PortLocation;
   simStep: number;
   showDirectRoute: boolean;
+  showWavesOverlay: boolean;
+  showReliabilityOverlay: boolean;
   selectedWaypoint: RouteWaypoint | null;
   setSelectedWaypoint: (wpt: RouteWaypoint) => void;
 }
@@ -66,6 +68,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   mapDest,
   simStep,
   showDirectRoute,
+  showWavesOverlay,
+  showReliabilityOverlay,
   selectedWaypoint,
   setSelectedWaypoint
 }) => {
@@ -129,6 +133,80 @@ export const RouteMap: React.FC<RouteMapProps> = ({
             <strong>Destination:</strong> {mapDest.name}
           </Popup>
         </Marker>
+
+        {/* Direct Great Circle Route Line */}
+        {showDirectRoute && (
+          <Polyline
+            positions={
+              routeResult?.direct_waypoints?.length
+                ? routeResult.direct_waypoints.map(w => [w.latitude, w.longitude])
+                : [[mapOrigin.latitude, mapOrigin.longitude], [mapDest.latitude, mapDest.longitude]]
+            }
+            color="#f43f5e"
+            weight={3}
+            dashArray="8, 8"
+            opacity={0.85}
+          >
+            <Popup>
+              <div className="text-xs font-bold text-rose-600">
+                Direct Great Circle Route (Unoptimized Standard Line)
+              </div>
+            </Popup>
+          </Polyline>
+        )}
+
+        {/* Waves Grid Overlay */}
+        {showWavesOverlay && waypoints.map((wpt, idx) => {
+          const waveColor = wpt.wave_height_m > 3.0 ? '#ef4444' : wpt.wave_height_m > 2.0 ? '#f59e0b' : '#38bdf8';
+          return (
+            <CircleMarker
+              key={`wave-grid-${idx}`}
+              center={[wpt.latitude + 0.12, wpt.longitude + 0.12]}
+              radius={Math.max(10, Math.min(22, wpt.wave_height_m * 6))}
+              pathOptions={{
+                color: waveColor,
+                weight: 1.5,
+                fillColor: waveColor,
+                fillOpacity: 0.25,
+                dashArray: '3, 3'
+              }}
+            >
+              <Popup>
+                <div className="text-xs">
+                  <strong className="block text-sky-400">🌊 Sea State Wave Grid</strong>
+                  <span>Wave Height: <b>{wpt.wave_height_m} m</b></span><br/>
+                  <span>Surface Current: <b>{wpt.current_speed_knots} kts</b></span>
+                </div>
+              </Popup>
+            </CircleMarker>
+          );
+        })}
+
+        {/* INCOIS Reliability Overlay */}
+        {showReliabilityOverlay && waypoints.map((wpt, idx) => {
+          const relColor = wpt.reliability_score >= 88 ? '#10b981' : wpt.reliability_score >= 75 ? '#f59e0b' : '#f43f5e';
+          return (
+            <CircleMarker
+              key={`rel-grid-${idx}`}
+              center={[wpt.latitude - 0.12, wpt.longitude - 0.12]}
+              radius={Math.max(12, Math.min(26, (wpt.reliability_score / 100) * 20))}
+              pathOptions={{
+                color: relColor,
+                weight: 1.5,
+                fillColor: relColor,
+                fillOpacity: 0.2
+              }}
+            >
+              <Popup>
+                <div className="text-xs">
+                  <strong className="block text-emerald-400">🛡️ INCOIS Reliability Overlay</strong>
+                  <span>Forecast Score: <b>{wpt.reliability_score}%</b></span><br/>
+                  <span>Model Risk: <b>{wpt.risk_level}</b></span>
+                </div>
+              </Popup>
+            </CircleMarker>
+          );
+        })}
 
         {/* Smart Route Line */}
         {waypoints.length > 0 && (

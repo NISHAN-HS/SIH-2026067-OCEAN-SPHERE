@@ -3,8 +3,10 @@ import { getForecast, getObservations } from '../../services/api';
 import { ForecastData, ObservationData } from '../../types';
 import { BarChart3, Thermometer, Droplets, Wind, Waves } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
+import { useTheme } from '../../hooks/useTheme';
 
 export const ForecastPage: React.FC = () => {
+  const { formatTemp, convertTemp, tempSymbol, tempUnit } = useTheme();
   const [forecasts, setForecasts] = useState<ForecastData[]>([]);
   const [observations, setObservations] = useState<ObservationData[]>([]);
 
@@ -32,11 +34,16 @@ export const ForecastPage: React.FC = () => {
     
     // HYCOM model might underpredict the peak and have a slight growing bias over time
     const hycomDivergence = i * 0.015;
-    const hycom_temp = Number((baseTemp + diurnalPattern * 0.85 + hycomDivergence).toFixed(2));
+    const rawHycom = baseTemp + diurnalPattern * 0.85 + hycomDivergence;
     
     // In-situ observation has more high-frequency noise
     const obsNoise = Math.cos(i * 3.14) * 0.1 + Math.sin(i * 1.5) * 0.05;
-    const obs_temp = Number((baseTemp + diurnalPattern + obsNoise).toFixed(2));
+    const rawObs = baseTemp + diurnalPattern + obsNoise;
+
+    const hycom_temp = Number(convertTemp(rawHycom).toFixed(2));
+    const obs_temp = Number(convertTemp(rawObs).toFixed(2));
+    const rawBias = Math.abs(rawHycom - rawObs);
+    const temp_bias = tempUnit === 'F' ? (rawBias * 1.8).toFixed(2) : rawBias.toFixed(2);
 
     // Salinity remains relatively stable but with minor fluctuations
     const baseSal = f.salinity;
@@ -47,7 +54,7 @@ export const ForecastPage: React.FC = () => {
       time: `T+${i + 1}`,
       hycom_temp,
       obs_temp,
-      temp_bias: Math.abs(hycom_temp - obs_temp).toFixed(2),
+      temp_bias,
       hycom_sal,
       obs_sal
     };
@@ -68,10 +75,10 @@ export const ForecastPage: React.FC = () => {
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <Thermometer className="w-5 h-5 text-rose-500" />
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Sea Surface Temperature (°C): HYCOM Model vs In-situ Observations</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Sea Surface Temperature ({tempSymbol}): HYCOM Model vs In-situ Observations</h3>
           </div>
           <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
-            MAE: 0.14 °C | RMSE: 0.21 °C
+            MAE: {(0.14 * (tempUnit === 'F' ? 1.8 : 1)).toFixed(2)} {tempSymbol} | RMSE: {(0.21 * (tempUnit === 'F' ? 1.8 : 1)).toFixed(2)} {tempSymbol}
           </span>
         </div>
 
@@ -82,8 +89,8 @@ export const ForecastPage: React.FC = () => {
               <XAxis dataKey="time" tick={{ fontSize: 11 }} />
               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Line type="monotone" dataKey="hycom_temp" stroke="#0EA5E9" name="HYCOM Forecast (°C)" strokeWidth={2.5} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="obs_temp" stroke="#22C55E" name="Observed Temp (°C)" strokeWidth={2.5} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="hycom_temp" stroke="#0EA5E9" name={`HYCOM Forecast (${tempSymbol})`} strokeWidth={2.5} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="obs_temp" stroke="#22C55E" name={`Observed Temp (${tempSymbol})`} strokeWidth={2.5} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
